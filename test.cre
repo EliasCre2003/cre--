@@ -1,0 +1,6 @@
+int8 sak = 3;
+sak++;
+
+if sak > 3 {
+    sak = 5;
+}
