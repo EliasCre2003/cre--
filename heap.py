@@ -6,8 +6,7 @@ class NodeType(Enum):
     CHAR = 3
 
 class Node:
-    def __init__(self, value: int, datatype: NodeType, size: int):
-        self.value: int = value
+    def __init__(self, datatype: NodeType, size: int):
         self.datatype: NodeType = datatype
         self.size: int = size
 
@@ -24,9 +23,12 @@ class Heap:
         self.next_empty_4: list[int] = [0]
         self.next_empty_8: int = 0
 
-    def insert(self, node: Node) -> bool:
+    def insert(self, node: Node) -> int | None:
+
+        # Function is a bit broken, the size is not calculated correctly
+
         if self.size + node.required_space() > self.max_size:
-            return False
+            return None
         
         if node.datatype == NodeType.INT4:
             if (node.size == 1):
@@ -42,10 +44,13 @@ class Heap:
                 if self.next_empty_8 % 2 != 0:
                     self.next_empty_8 += 1
         else:
-            self.heap[self.next_empty_8] = node
+            address = self.next_empty_8
+            self.heap[address] = node
             self.next_empty_8 += node.size * 2
-            self.next_empty = self.next_empty_8
             self.next_empty_4.append(self.next_empty_8)
+
+        self.size += node.required_space()
+        return address
 
     def get(self, address: int) -> Node:
         return self.heap[address]
