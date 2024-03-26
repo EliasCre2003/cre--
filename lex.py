@@ -6,6 +6,7 @@ class TokenType(Enum):
     END_STATEMENT = 0
     NUMBER = 1
     IDENT = 2
+    CHARACTER = 3
 
     # Keywords.
     LABEL = 101
@@ -159,7 +160,7 @@ class Lexer:
                     self.next_char()
                 token_text = self.source[start_pos:self.cur_pos]
                 if token_text in ''.join(chr(i) for i in range(128)):
-                    token = Token(token_text, TokenType.CHAR)
+                    token = Token(token_text, TokenType.CHARACTER)
                 else:
                     self.abort(f"Unrecognized character: {token_text}")
             case ';':

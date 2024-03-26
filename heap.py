@@ -1,5 +1,7 @@
 from enum import Enum
 
+from lex import TokenType
+
 class NodeType(Enum):
     INT8 = 1
     INT4 = 2
@@ -22,6 +24,19 @@ class Heap:
         self.size: int = 0
         self.next_empty_4: list[int] = [0]
         self.next_empty_8: int = 0
+
+    def add_variable(self, type: TokenType, size: int = 1) -> int | None:
+        match type:
+            case TokenType.INT8:
+                node = Node(NodeType.INT8, size)
+            case TokenType.INT4:
+                node = Node(NodeType.INT4, size)
+            case TokenType.CHAR:
+                node = Node(NodeType.CHAR, size)
+            case _:
+                return None
+        return self.insert(node)
+
 
     def insert(self, node: Node) -> int | None:
 

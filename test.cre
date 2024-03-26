@@ -1,5 +1,9 @@
+char smo = 'c';
+
 int8 sak = 3;
 sak++;
+
+
 
 if sak > 3 {
     sak = 5;
