@@ -210,6 +210,8 @@ def add_label(line: str) -> bool:
     address_labels[line[0]] = label_address_counter - 1
     rest = line[1].split(" ")
     rest = trim(rest)
+    if len(rest) == 0:
+        return True
     if rest[0] in two_word_instructions:
         label_address_counter += 1
     return True
@@ -275,8 +277,8 @@ def trim(tokens: list[str]) -> list[str]:
     return tokens
 
 
-def main():
-    with open("resources/comp_test.txt", "r") as f:
+def assemble(source_path: str, bin_path) -> None:
+    with open(source_path, "r") as f:
         lines = f.readlines()
     for line in lines:
         if not add_label(line):
@@ -287,8 +289,12 @@ def main():
             print("Error: Invalid line")
             break
     print(data)
-    with open("resources/comp_test.bin", "wb") as f:
+    with open(bin_path, "wb") as f:
         f.write(bytearray(data))
+
+
+def main():
+    assemble("resources/comp_test.txt", "resources/comp_test.bin")
 
 
 if __name__ == "__main__":

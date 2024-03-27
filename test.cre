@@ -1,10 +1,6 @@
-char smo = 'c';
+int4 a = 2;
+int8 b = 1 + a;
 
-int8 sak = 3;
-sak++;
-
-
-
-if sak > 3 {
-    sak = 5;
+if a > 2 {
+    a = 2+1;
 }

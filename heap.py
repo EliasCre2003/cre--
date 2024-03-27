@@ -55,13 +55,15 @@ class Heap:
                 address = self.next_empty_4.pop(-1)
                 self.heap[address] = node
                 self.next_empty_4.append(address + node.size)
-                self.next_empty_8 = address + node.size
-                if self.next_empty_8 % 2 != 0:
-                    self.next_empty_8 += 1
+            self.next_empty_8 = address + node.size
+            if self.next_empty_8 % 2 != 0:
+                self.next_empty_8 += 1
         else:
             address = self.next_empty_8
             self.heap[address] = node
             self.next_empty_8 += node.size * 2
+            if address in self.next_empty_4:
+                self.next_empty_4.remove(address)
             self.next_empty_4.append(self.next_empty_8)
 
         self.size += node.required_space()

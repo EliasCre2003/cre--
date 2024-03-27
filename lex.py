@@ -24,14 +24,16 @@ class TokenType(Enum):
     EQ = 201
     PLUS = 202
     MINUS = 203
-    EQEQ = 206
-    NOTEQ = 207
-    LT = 208
-    LTEQ = 209
-    GT = 210
-    GTEQ = 211
     INC = 212
     DEC = 213
+    PLUS_EQ = 214
+    MINUS_EQ = 215
+    EQEQ = 250
+    NOTEQ = 251
+    LT = 252
+    LTEQ = 253
+    GT = 254
+    GTEQ = 255
 
 
 class Token:
@@ -108,6 +110,10 @@ class Lexer:
                     last_char = self.cur_char
                     self.next_char()
                     token = Token(last_char + self.cur_char, TokenType.INC)
+                elif self.peek() == '=':
+                    last_char = self.cur_char
+                    self.next_char()
+                    token = Token(last_char + self.cur_char, TokenType.PLUS_EQ)
                 else:
                     token = Token(self.cur_char, TokenType.PLUS)
             case '-':
@@ -115,6 +121,10 @@ class Lexer:
                     last_char = self.cur_char
                     self.next_char()
                     token = Token(last_char + self.cur_char, TokenType.DEC)
+                elif self.peek() == '=':
+                    last_char = self.cur_char
+                    self.next_char()
+                    token = Token(last_char + self.cur_char, TokenType.MINUS_EQ)
                 else:
                     token = Token(self.cur_char, TokenType.MINUS)
             case '=':
@@ -185,6 +195,6 @@ class Lexer:
                 token_type = Token.check_if_keyword(token_text)
                 token = Token(token_text, token_type)
             case _:
-                self.abort(f"Unrecognized character: {ord(self.cur_char)}")
+                self.abort(f"Unrecognized character: {self.cur_char}")
         self.next_char()
         return token

@@ -1,5 +1,9 @@
-from fileinput import filename
+import sys
 from lex import *
+from emit import *
+from parse import *
+from heap import *
+from assembler import assemble
 
 def main():
     print("cre++ Compiler")
@@ -12,11 +16,15 @@ def main():
         source = f.read()
 
     lexer = Lexer(source)
+    emitter = Emitter("out.s")
+    heap = Heap(4096)
+    parser = Parser(lexer, emitter, heap)
 
-    token = lexer.get_token()
-    while token.type != TokenType.EOF:
-        print(token.type)
-        token = lexer.get_token()
+    parser.program()    # Start the parser.
+    emitter.write_file()    # Write the output to file.
+    print("Compiling completed.")
+    assemble("out.s", "out.bin")
+    print("Assembling completed.")
 
 if __name__ == "__main__":
     main()

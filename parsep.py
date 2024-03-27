@@ -1,4 +1,3 @@
-from os import close
 import sys
 
 from lex import *
@@ -18,11 +17,6 @@ class Parser:
         self.symbols: dict[str, tuple[int, TokenType]] = {}   # Variables declared so far. {symbol: (address, type)}
         self.labels_declared: set = set()
         self.labels_gotoed: set = set()
-
-        self.label_stack: list[str] = []
-        self.label_counter: int = 0
-
-        self.scopes: list["Statement"] = []
 
         self.cur_token: Token = None
         self.peek_token: Token = None
@@ -60,24 +54,113 @@ class Parser:
             if self.check_token(type): return True
         return False
     
-    def generate_next_label(self) -> str:
-        label = f"L{self.label_counter}"
-        self.label_counter += 1
-        self.label_stack.append(label)
-        return label
-    
-    def get_next_label(self) -> str:
-        return self.label_stack.pop()
-    
-    def open_scope(self, scope: "Statement") -> None:
-        if isinstance(scope, If) or isinstance(scope, While):
-            self.scopes.append(scope)
+    # expression ::= term {( "-" | "+" ) term}
+    def expression(self) -> None:
+        # print("EXPRESSION")
+        # self.unary()
+        # while self.check_token(TokenType.PLUS) or self.check_token(TokenType.MINUS):
+        #     self.emitter.emit("")  # TODO: Add code generation
+        #     self.next_token()
+        #     self.unary()
+        self.next_token()
+        # if self.check_token(TokenType.NUMBER):
+        #     if not (type == TokenType.INT8 or type == TokenType.INT4):
+        #         self.abort(f"Assigning number to non-integer variable.")
+        #     if type == TokenType.INT8:
+        #         if int(self.cur_token.text) > 255:
+        #             self.abort(f"Assigning number greater than 255 to INT8 variable.")
+        #         # GENERATE CODE
+            
+        #     elif type == TokenType.INT4:
+        #         if int(self.cur_token.text) > 15:
+        #             self.abort(f"Assigning number greater than 15 to INT4 variable.")
+            
+        # elif self.check_token(TokenType.CHARACTER):
+        #     if type != TokenType.CHAR:
+        #         self.abort(f"Assigning character to non-character variable.")
+        # elif self.check_token(TokenType.IDENT):
+        #     if self.cur_token.text not in self.symbols:
+        #         self.abort(f"Assigning from undeclared variable {self.cur_token.text}.")
+        #     elif self.symbols[self.cur_token.text][1] != type:
+        #         self.abort("Assigning from different type.")
+        #     else:
+        # if self.check_token(TokenType.NUMBER):
 
-    def close_scope(self) -> "Statement":
-        if len(self.scopes) == 0:
-            self.abort("No scope to close.")
-        return self.scopes.pop()
+            
+
+    def unary(self) -> None:
+        print("UNARY")
+        if self.check_token(TokenType.PLUS) or self.check_token(TokenType.MINUS):
+            self.emitter.emit("")   # TODO: Add code generation
+            self.next_token()
+        self.primary()
+        
+    def primary(self) -> None:
+        print("PRIMARY")
+        if self.check_token(TokenType.NUMBER):
+            self.emitter.emit("")   # TODO: Add code generation
+            self.next_token()
+        elif self.check_token(TokenType.IDENT):
+            # Ensure the variable already exists.
+            if self.cur_token.text not in self.symbols:
+                self.abort(f"Referencing variable before assignment: {self.cur_token.text}")
+            self.emitter.emit()     # TODO: Add code generation
+            self.next_token()
+        else:
+            self.abort(f"Unexpected token at {self.cur_token.text}")
     
+    # comparison ::= expression (("==" | "!=" | ">" | ">=" | "<" | "<=") expression)
+    def comparison(self) -> None:
+        print("COMPARISON")
+        self.expression()
+        if self.is_comparison_operator():
+            self.emitter.emit("")   # TODO: Add code generation
+            self.next_token()
+            self.expression()
+        else:
+            self.abort(f"Expected comparison operator at {self.cur_token.text}")
+    
+        # Can have 0 or more comparison operator and expressions.
+        while self.is_comparison_operator():
+            self.emitter.emit("")   # TODO: Add code generation
+            self.next_token()
+            self.expression()
+
+    def declaration(self, type: TokenType) -> None:
+        self.next_token()
+        if not self.check_token(TokenType.IDENT):
+            self.abort(f"Expected identifier after declaration, got {self.cur_token.type.name} instead.")
+        if self.cur_token.text in self.symbols:
+            self.abort(f"Variable {self.cur_token.text} already declared.")
+        address = self.heap.add_variable(type)
+        if address is None:
+            self.abort("Out of memory.")
+        self.symbols[self.cur_token.text] = address
+        self.assignment()
+
+
+    # assignment ::= IDENT "=" comparison
+    def assignment(self) -> None:
+        if not self.check_token(TokenType.IDENT):
+            self.abort(f"Expected identifier, got {self.cur_token.type.name} instead.")
+        if self.cur_token.text not in self.symbols:
+            self.abort(f"Assigning to undeclared variable {self.cur_token.text}.")
+        
+        self.emitter.emit_line(f"FIM P7 {self.symbols[self.cur_token.text][0]}")
+
+        type = self.symbols[self.cur_token.text][1]
+        self.next_token()
+        self.match(TokenType.EQ)
+        if self.expression() != type:
+            self.abort("Type mismatch in assignment.")
+
+
+        
+    def statement(self) -> None:
+        # Check the first token to see what kind of statement this is.
+        if self.check_token(TokenType.INT8) or self.check_token(TokenType.INT4) or self.check_token(TokenType.CHAR):
+            self.declaration(self.cur_token.type)
+
     def load_to_reg(self, address: int, reg: int) -> None:
         if reg < 0 or reg > 15:
             self.abort(f"Invalid register number: {reg}")
@@ -130,7 +213,7 @@ class Parser:
         self.save_from_reg(address, reg)
         self.save_from_reg(address + 1, reg + 1)
 
-    def opperation_reg_to_reg_in_acc(self, reg1: int, reg2: int, opperation: TokenType) -> None:
+    def opperation_reg_to_reg(self, reg1: int, reg2: int, opperation: TokenType) -> None:
         if reg1 == reg2:
             self.abort(f"Cannot add a register to itself.")
         if reg1 < 0 or reg1 > 15 or reg2 < 0 or reg2 > 15:
@@ -142,21 +225,17 @@ class Parser:
         else:
             self.abort(f"Invalid opperation: {opperation}")
         self.emitter.emit(
-            f"LD  R{reg1}\n" +
-            f"{opcode} R{reg2}\n"
+            f"XCH R{reg1}\n" +
+            f"{opcode} R{reg2}\n" +
+            f"XCH R{reg1}\n"
         )
-
-
-    def opperation_reg_to_reg(self, reg1: int, reg2: int, opperation: TokenType) -> None:
-        self.opperation_reg_to_reg_in_acc(reg1, reg2, opperation)
-        self.emitter.emit_line(f"XCH R{reg1}")
     
     def opperation_reg_to_pair(self, reg: int, pair: int, opperation: TokenType) -> None:
         if pair < 0 or pair > 7 or reg < 0 or reg > 15:
             self.abort(f"Invalid pair number: {pair} or register number: {reg}")
         pair = pair*2, pair*2+1
         self.opperation_reg_to_reg(pair[1], reg, opperation)
-        self.emitter.emit_line(f"JCN 0b1010 {self.generate_next_label()}") # TODO: Implement correct label generation
+        self.emitter.emit_line(f"JCN 0b1010 L0") # TODO: Implement correct label generation
         if opperation == TokenType.PLUS:
             opcode = "IAC"
         elif opperation == TokenType.MINUS:
@@ -165,9 +244,8 @@ class Parser:
             self.abort(f"Invalid opperation: {opperation}")
         self.emitter.emit(
             f"XCH R{pair[0]}\n" + 
-            f"{opcode}\n" + 
-            f"XCH R{pair[0]}\n" +
-            f"{self.get_next_label()},"    # TODO: Implement correct label generation
+            f"{opcode}" + 
+            f"XCH R{pair[0]}\n"
         )
     
     def opperation_pair_pair(self, pair1: int, pair2: int, opperation: TokenType) -> None:
@@ -197,66 +275,6 @@ class Parser:
     def sub_pair_from_pair(self, pair1: int, pair2: int) -> None:
         self.opperation_pair_pair(pair1, pair2, TokenType.MINUS)
 
-    def statement(self) -> None:
-        if self.cur_token.type in [TokenType.INT8, TokenType.INT4, TokenType.CHAR]:
-            declaretion_tokens: list[Token] = [self.cur_token]
-            while True:
-                self.next_token()
-                if self.check_token(TokenType.END_STATEMENT):
-                    break
-                declaretion_tokens.append(self.cur_token)
-            successfull_emit = Declaretion(declaretion_tokens, self).emit()
-            if not successfull_emit:
-                self.abort("Invalid declaretion.")
-            self.end_statement()
-            return
-        elif self.check_token(TokenType.IDENT):
-            if self.check_peek(TokenType.EQ):
-                assignment_tokens: list[Token] = [self.cur_token]
-                while True:
-                    self.next_token()
-                    if self.check_token(TokenType.END_STATEMENT):
-                        break
-                    if self.check_token(TokenType.EOF):
-                        self.abort("Unexpected EOF.")
-                    assignment_tokens.append(self.cur_token)
-                successfull_emit = Assignment(assignment_tokens, self).emit()
-                if not successfull_emit:
-                    self.abort("Invalid assignment.")
-                self.end_statement()
-                return
-            elif self.check_peek(TokenType.PLUS_EQ):
-                ...
-            elif self.check_peek(TokenType.MINUS_EQ):
-                ...
-            elif self.check_peek(TokenType.INC):
-                ...
-            elif self.check_peek(TokenType.DEC):
-                ...
-            else:
-                self.abort("Invalid statement.")
-        elif self.check_token(TokenType.IF):
-            if_tokens: list[Token] = [self.cur_token]
-            while True:
-                self.next_token()
-                if_tokens.append(self.cur_token)
-                if self.check_token(TokenType.OPENBODY):
-                    break
-            if_statement: If = If(if_tokens, self)
-            successfull_emit = if_statement.emit()
-            if not successfull_emit:
-                self.abort("Invalid if statement.")
-            self.open_scope(if_statement)
-            self.next_token()
-
-        elif self.check_token(TokenType.CLOSEBODY):
-            scope = self.close_scope()
-            if isinstance(scope, If):
-                self.emitter.emit(f"{self.get_next_label()},")
-            self.next_token()
-        else:
-            self.abort("Invalid statement.")
-                
 
     def program(self) -> None:
 
@@ -265,12 +283,9 @@ class Parser:
             self.statement()
         
         # Add an infinite loop to the end of the program.
-        self.emitter.emit_line("\nEOP, JUN EOP")
+        self.emitter.emit_line("EOP, JUN EOP")
 
         # Check that each label referenced in a GOTO is declared.
         for label in self.labels_gotoed:
             if label not in self.labels_declared:
                 self.abort(f"Attempting to GOTO to undeclared label: {label}")
-
-
-from statements import *
