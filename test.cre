@@ -1,6 +1,20 @@
-int4 a = 2;
-int8 b = 1 + a;
+int8 a1 = 0;
+int8 a2 = 0;
+int8 b1 = 0;
+int8 b2 = 1;
+int8 c1; int8 c2;
+int8 i;
 
-if a > 2 {
-    a = 2+1;
+while i < 30 {
+    c2 = a2 + b2;
+    if b2 > 128 {
+        if c2 < 128 {
+            c1 = c1 + 1;
+        }
+    }
+    a2 = b2;
+    b2 = c2;
+    a1 = b1;
+    b1 = c1;
+    i = i + 1;
 }

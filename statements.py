@@ -56,7 +56,7 @@ class Expression(Statement):
                     break
                 next_opperation = self.tokens[i+1].type
                 continue
-            self.parser.opperation_pair_pair(pair_offset+1, pair_offset, next_opperation, skip_last)
+            self.parser.opperation_pair_pair(pair_offset+1, pair_offset, next_opperation)
             if i == len(self.tokens) - 1:
                 break
             next_opperation = self.tokens[i+1].type
@@ -133,9 +133,10 @@ class Declaretion(Statement):
             return False                                # No variable name
         if self.tokens[1].text in self.parser.symbols:
             return False                                # Variable already declared
+        if len(self.tokens) == 2:
+            return True                                 # No assignment, EX: int8 a;
         if self.tokens[2] == TokenType.EQ:
             return self.assignment.check_validity(Assignment.DECLARETION)     # Assignment, EX: int8 a = 5;
-        return True                                     # No assigmnent, EX: int8 a;
     
     def emit(self) -> bool:
         self.check_validity()
@@ -164,25 +165,25 @@ class Comparision(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
+        self.parser.emitter.emit_line(f"FIM P0 0x0")
         self.expression1.emit(0)
+        self.parser.emitter.emit_line(f"FIM P1 0x0")
         self.expression2.emit(1)
-        self.parser.sub_pair_from_pair(0, 1)
-        match self.opperation:
-            case TokenType.EQ:
-                condition = "0b1100"
-            case TokenType.NOTEQ:
-                condition = "0b0100"
-            case TokenType.LT:
-                condition = "0b1010"
-            case TokenType.LTEQ:
-                condition = "0b1110"
-            case TokenType.GT:
-                condition = "0b0110"
-            case TokenType.GTEQ:
-                condition = "0b0010"
-            case _:
-                return False
-        self.parser.emitter.emit_line(f"JCN {condition} {self.parser.generate_next_label()}")
+        condition = {
+            TokenType.EQ:    ("0b1100", "0b1100"),
+            TokenType.NOTEQ: ("0b1100", "0b0100"),
+            TokenType.LT:    ("0b1110", "0b1010"),
+            TokenType.LTEQ:  ("0b1110", "0b1110"),
+            TokenType.GT:    ("0b0010", "0b0110"),
+            TokenType.GTEQ:  ("0b0010", "0b0010")
+        }[self.opperation]
+        if condition is None:
+            return False
+        body_label = self.parser.generate_next_label()
+        self.parser.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
+        self.parser.emitter.emit_line(f"JCN {condition[0]} {body_label}")
+        self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+        self.parser.emitter.emit_line(f"JCN {condition[1]} {body_label}")
         return True
     
 
@@ -204,7 +205,8 @@ class If(Statement):
 class While(Statement):
     def __init__(self, tokens: list[Token], parser: Parser):
         super().__init__(tokens, parser)
-        self.comparision = Comparision(self.tokens[1:-1], self.parser)
+        self.comparision: Comparision = Comparision(self.tokens[1:-1], self.parser)
+        self.top_label: str = None
 
     def check_validity(self) -> bool:
         return self.tokens[0].type == TokenType.WHILE and self.tokens[-1].type == TokenType.OPENBODY and self.comparision.check_validity()
@@ -212,8 +214,6 @@ class While(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        # outside_label = self.parser.get_next_label()
-        # self.parser.open_scope()
-        # self.parser.emitter.emit_line(self.parser.get_next_label())
-        # self.comparision.emit()
+        self.parser.emitter.emit_line(f"{self.top_label},")
+        self.comparision.emit()
         return True

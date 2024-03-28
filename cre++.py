@@ -1,9 +1,9 @@
-import sys
 from lex import *
 from emit import *
 from parse import *
 from heap import *
 from assembler import assemble
+
 
 def main():
     print("cre++ Compiler")
@@ -23,8 +23,10 @@ def main():
     parser.program()    # Start the parser.
     emitter.write_file()    # Write the output to file.
     print("Compiling completed.")
-    assemble("out.s", "out.bin")
+    result = assemble("out.s", "out.bin")   # Assemble the output.
     print("Assembling completed.")
+    print(result)
+
 
 if __name__ == "__main__":
     main()

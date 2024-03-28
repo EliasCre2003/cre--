@@ -69,6 +69,8 @@ def handle_lines(line: str) -> bool:
     tokens = trim(tokens)
     if len(tokens) == 0:
         return True
+    if tokens[0] == '\n':
+        return True
     instruction = tokens[0].strip()
     tokens = list(map(str.strip, tokens[1:]))
     match instruction:
@@ -211,6 +213,7 @@ def add_label(line: str) -> bool:
     rest = line[1].split(" ")
     rest = trim(rest)
     if len(rest) == 0:
+        label_address_counter -= 1
         return True
     if rest[0] in two_word_instructions:
         label_address_counter += 1
@@ -248,13 +251,6 @@ def conv_r(r: str) -> int | str:
 
 
 def conv_p(p: str) -> int | str:
-    # if (len(p) == 4 and p[0] == "R" and p[2] == "R" and int(p[1]) % 2 == 0
-    #         and int(p[1]) <= 9 and int(p[3]) == (int(p[1]) + 1)):
-    #     return int(p[1]) // 2
-    # elif len(p) == 2 and p[0] == "P" and 0 <= (pair := int(p[1])) < 8:
-    #     return pair
-    # else:
-    #     return p
     if p[0] == "P":
         p = p.split("P")
         if 0 <= int(p[1]) < 8:
@@ -277,7 +273,7 @@ def trim(tokens: list[str]) -> list[str]:
     return tokens
 
 
-def assemble(source_path: str, bin_path) -> None:
+def assemble(source_path: str, bin_path) -> list[int]:
     with open(source_path, "r") as f:
         lines = f.readlines()
     for line in lines:
@@ -287,10 +283,10 @@ def assemble(source_path: str, bin_path) -> None:
     for line in lines:
         if not handle_lines(line):
             print("Error: Invalid line")
-            break
-    print(data)
+            return None
     with open(bin_path, "wb") as f:
         f.write(bytearray(data))
+    return data
 
 
 def main():
@@ -298,5 +294,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print()
     main()

@@ -60,9 +60,13 @@ class Parser:
             if self.check_token(type): return True
         return False
     
-    def generate_next_label(self) -> str:
+    def generate_a_label(self) -> str:
         label = f"L{self.label_counter}"
         self.label_counter += 1
+        return label
+    
+    def generate_next_label(self) -> str:
+        label = self.generate_a_label()
         self.label_stack.append(label)
         return label
     
@@ -151,7 +155,7 @@ class Parser:
         self.opperation_reg_to_reg_in_acc(reg1, reg2, opperation)
         self.emitter.emit_line(f"XCH R{reg1}")
     
-    def opperation_reg_to_pair(self, reg: int, pair: int, opperation: TokenType) -> None:
+    def opperation_reg_to_pair(self, pair: int, reg: int, opperation: TokenType) -> None:
         if pair < 0 or pair > 7 or reg < 0 or reg > 15:
             self.abort(f"Invalid pair number: {pair} or register number: {reg}")
         pair = pair*2, pair*2+1
@@ -176,14 +180,14 @@ class Parser:
         if pair1 < 0 or pair1 > 7 or pair2 < 0 or pair2 > 7:
             self.abort(f"Invalid pair number: {pair1} or {pair2}")
         pair1 = pair1*2, pair1*2+1
-        self.opperation_reg_to_pair(pair1[1], pair2, opperation)
-        self.opperation_reg_to_reg(pair1[0], pair2*2, opperation)
+        self.opperation_reg_to_pair(pair2, pair1[1], opperation)
+        self.opperation_reg_to_reg(pair2*2, pair1[0], opperation)
 
     def add_reg_to_reg(self, reg1: int, reg2: int) -> None:
         self.opperation_reg_to_reg(reg1, reg2, TokenType.PLUS)
 
     def add_reg_to_pair(self, pair: int, reg: int) -> None:
-        self.opperation_reg_to_pair(reg, pair, TokenType.PLUS)
+        self.opperation_reg_to_pair(pair, reg, TokenType.PLUS)
     
     def add_pair_to_pair(self, pair1: int, pair2: int) -> None:
         self.opperation_pair_pair(pair1, pair2, TokenType.PLUS)
@@ -192,7 +196,7 @@ class Parser:
         self.opperation_reg_to_reg(reg1, reg2, TokenType.MINUS)
 
     def sub_reg_from_pair(self, pair: int, reg: int) -> None:
-        self.opperation_reg_to_pair(reg, pair, TokenType.MINUS)
+        self.opperation_reg_to_pair(pair, reg, TokenType.MINUS)
     
     def sub_pair_from_pair(self, pair1: int, pair2: int) -> None:
         self.opperation_pair_pair(pair1, pair2, TokenType.MINUS)
@@ -210,6 +214,7 @@ class Parser:
                 self.abort("Invalid declaretion.")
             self.end_statement()
             return
+        
         elif self.check_token(TokenType.IDENT):
             if self.check_peek(TokenType.EQ):
                 assignment_tokens: list[Token] = [self.cur_token]
@@ -235,13 +240,12 @@ class Parser:
                 ...
             else:
                 self.abort("Invalid statement.")
+
         elif self.check_token(TokenType.IF):
             if_tokens: list[Token] = [self.cur_token]
-            while True:
+            while not self.check_token(TokenType.OPENBODY):
                 self.next_token()
                 if_tokens.append(self.cur_token)
-                if self.check_token(TokenType.OPENBODY):
-                    break
             if_statement: If = If(if_tokens, self)
             successfull_emit = if_statement.emit()
             if not successfull_emit:
@@ -249,13 +253,31 @@ class Parser:
             self.open_scope(if_statement)
             self.next_token()
 
+        elif self.check_token(TokenType.WHILE):
+            while_tokens: list[Token] = [self.cur_token]
+            while not self.check_token(TokenType.OPENBODY):
+                self.next_token()
+                while_tokens.append(self.cur_token)
+            while_statement: While = While(while_tokens, self)
+            while_statement.top_label = self.generate_a_label()
+            successfull_emit = while_statement.emit()
+            if not successfull_emit:
+                self.abort("Invalid while statement.")
+            self.open_scope(while_statement)
+            self.next_token()
+                
         elif self.check_token(TokenType.CLOSEBODY):
             scope = self.close_scope()
             if isinstance(scope, If):
                 self.emitter.emit(f"{self.get_next_label()},")
+            elif isinstance(scope, While):
+                self.emitter.emit_line(f"JUN {scope.top_label}")
+                self.emitter.emit_line(f"{self.get_next_label()},")
             self.next_token()
+
         else:
             self.abort("Invalid statement.")
+            
                 
 
     def program(self) -> None:
