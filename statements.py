@@ -1,5 +1,8 @@
+from emit import Opcode
 from lex import Token, TokenType
 from parse import Parser
+
+
 
 class Statement:
     def __init__(self, tokens: list[Token], parser: Parser):
@@ -42,9 +45,9 @@ class Expression(Statement):
             token = self.tokens[i]
             if token.type == TokenType.NUMBER:
                 num_text:str = f"0x{hex(int(token.text) % 256)[2:].upper()}"
-                self.parser.emitter.emit_line(f"FIM P{pair} {num_text}")
+                self.parser.emitter.emit_instruction(Opcode.FIM, f"P{pair}", num_text)
             elif token.type == TokenType.CHARACTER:
-                self.parser.emitter.emit_line(f"FIM P{pair} {ord(token.text)}")
+                self.parser.emitter.emit_instruction(Opcode.FIM, f"P{pair}", ord(token.text))
             elif token.type == TokenType.IDENT:
                 variable = self.parser.symbols[token.text]
                 if variable[1] in [TokenType.INT8, TokenType.CHAR]:
@@ -162,30 +165,61 @@ class Comparision(Statement):
     def check_validity(self) -> bool: 
         return self.expression1.check_validity() and self.expression2.check_validity()
     
+    # C1 = 0 Do not invert jump condition
+    # C1 = 1 Invert jump condition
+    # C2 = 1 Jump if the accumulator content is zero
+    # C3 = 1 Jump if the carry/link content is 1
+    # C4 = 1 Jump if test signal (pin 10 on 4004) is zero.
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        self.parser.emitter.emit_line(f"FIM P0 0x0")
+        self.parser.emitter.emit_instruction(Opcode.FIM, Opcode.P0, 0x0)
         self.expression1.emit(0)
-        self.parser.emitter.emit_line(f"FIM P1 0x0")
+        self.parser.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
         self.expression2.emit(1)
-        condition = {
-            TokenType.EQ:    ("0b1100", "0b1100"),
-            TokenType.NOTEQ: ("0b1100", "0b0100"),
-            TokenType.LT:    ("0b1110", "0b1010"),
-            TokenType.LTEQ:  ("0b1110", "0b1110"),
-            TokenType.GT:    ("0b0010", "0b0110"),
-            TokenType.GTEQ:  ("0b0010", "0b0010")
-        }[self.opperation]
-        if condition is None:
-            return False
-        body_label = self.parser.generate_next_label()
+        body_end_label = self.parser.emitter.generate_next_label()
         self.parser.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
-        self.parser.emitter.emit_line(f"JCN {condition[0]} {body_label}")
-        self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-        self.parser.emitter.emit_line(f"JCN {condition[1]} {body_label}")
+        match self.opperation:
+            case TokenType.EQ:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+            case TokenType.NOTEQ:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0100", body_end_label)
+            case TokenType.LT:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                body_label = self.parser.emitter.generate_a_label()
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1010", body_end_label)
+                self.parser.emitter.emit_label(body_label)
+            case TokenType.LTEQ:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                body_label = self.parser.emitter.generate_a_label()
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                self.parser.emitter.emit_label(body_label)
+            case TokenType.GT:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                body_label = self.parser.emitter.generate_a_label()
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0110", body_end_label)
+                self.parser.emitter.emit_label(body_label)
+            case TokenType.GTEQ:
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                body_label = self.parser.emitter.generate_a_label()
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
+                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                self.parser.emitter.emit_label(body_label)
+            case _:
+                return False
         return True
-    
+
 
 class If(Statement):
     def __init__(self, tokens: list[Token], parser: Parser):
@@ -214,6 +248,6 @@ class While(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        self.parser.emitter.emit_line(f"{self.top_label},")
+        self.parser.emitter.emit_label(self.top_label)
         self.comparision.emit()
         return True

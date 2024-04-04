@@ -58,12 +58,11 @@ data: list[int] = []
 address_labels: dict[str, int] = {}
 label_address_counter = 0
 
-
 def handle_lines(line: str) -> bool:
     line.strip()
     tokens = line.split(';')[0].replace("\t", " ")
     if len(sp := tokens.split(",")) != 1:
-        tokens = sp[1].split(" ")
+        tokens = sp[-1].split(" ")
     else:
         tokens = tokens.strip().split(" ")
     tokens = trim(tokens)
@@ -78,7 +77,7 @@ def handle_lines(line: str) -> bool:
             data.append(0x00)
         case "JCN":
             data.append(0x10 + conv_int(tokens[0], 0xF))
-            data.append(address_labels[tokens[1]])
+            data.append(address_labels[tokens[1]] & 0xFF)
         case "FIM":
             pair = conv_p(tokens[0])
             data.append(0x20 + (conv_int(pair, 0x8) << 1))
@@ -202,14 +201,15 @@ def add_label(line: str) -> bool:
         elif sp[0] in two_word_instructions:
             label_address_counter += 1
         return True
-    elif len(line) > 2:
-        print("Error: Invalid line")
-        return False
+    # elif len(line) > 2:
+    #     print("Error: Invalid line")
+        # return False
     if (line[0] in instructions) or (line[0] in address_labels):
         return False
     if line[0].isnumeric():
         return False
-    address_labels[line[0]] = label_address_counter - 1
+    for i in range(len(line)-1):
+        address_labels[line[i]] = label_address_counter - 1
     rest = line[1].split(" ")
     rest = trim(rest)
     if len(rest) == 0:
@@ -279,7 +279,7 @@ def assemble(source_path: str, bin_path) -> list[int]:
     for line in lines:
         if not add_label(line):
             print("Error: Invalid line")
-            break
+            return None
     for line in lines:
         if not handle_lines(line):
             print("Error: Invalid line")

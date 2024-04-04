@@ -169,7 +169,7 @@ class Lexer:
                         self.abort("Expected closing quote for character.")
                     self.next_char()
                 token_text = self.source[start_pos:self.cur_pos]
-                if token_text in ''.join(chr(i) for i in range(128)):
+                if token_text.isascii():
                     token = Token(token_text, TokenType.CHARACTER)
                 else:
                     self.abort(f"Unrecognized character: {token_text}")
@@ -189,12 +189,14 @@ class Lexer:
                 token = Token(token_text, TokenType.NUMBER)
             case item if item.isalpha():
                 start_pos = self.cur_pos
-                while self.peek().isalnum():
+                while self.peek().isalnum() or self.peek() in ['[', ']']:
                     self.next_char()
                 token_text = self.source[start_pos:self.cur_pos + 1]
                 token_type = Token.check_if_keyword(token_text)
                 token = Token(token_text, token_type)
+
             case _:
                 self.abort(f"Unrecognized character: {self.cur_char}")
         self.next_char()
         return token
+

@@ -1,16 +1,12 @@
-int8 a1 = 0;
-int8 a2 = 0;
-int8 b1 = 0;
-int8 b2 = 1;
-int8 c1; int8 c2;
+int8 a1 = 0; int8 a2 = 0;
+int8 b1 = 0; int8 b2 = 1;
+int8 c1;     int8 c2;
 int8 i;
-
-while i < 30 {
+while i < 23 {
     c2 = a2 + b2;
-    if b2 > 128 {
-        if c2 < 128 {
-            c1 = c1 + 1;
-        }
+    c1 = a1 + b1;
+    if c2 < b2 {
+        c1 = c1 + 1;
     }
     a2 = b2;
     b2 = c2;
