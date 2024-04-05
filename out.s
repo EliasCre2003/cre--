@@ -1,36 +1,36 @@
     FIM     P0    0x0 ; 0x000
     LD      R0        ; 0x002
     WRM               ; 0x003
-    LD      R1        ; 0x004
-    FIM     P7      1 ; 0x005
-    SRC     P7        ; 0x007
+    FIM     P7      1 ; 0x004
+    SRC     P7        ; 0x006
+    LD      R1        ; 0x007
     WRM               ; 0x008
     FIM     P0    0x0 ; 0x009
-    LD      R0        ; 0x00b
-    FIM     P7      2 ; 0x00c
-    SRC     P7        ; 0x00e
+    FIM     P7      2 ; 0x00b
+    SRC     P7        ; 0x00d
+    LD      R0        ; 0x00e
     WRM               ; 0x00f
-    LD      R1        ; 0x010
-    FIM     P7      3 ; 0x011
-    SRC     P7        ; 0x013
+    FIM     P7      3 ; 0x010
+    SRC     P7        ; 0x012
+    LD      R1        ; 0x013
     WRM               ; 0x014
     FIM     P0    0x0 ; 0x015
-    LD      R0        ; 0x017
-    FIM     P7      4 ; 0x018
-    SRC     P7        ; 0x01a
+    FIM     P7      4 ; 0x017
+    SRC     P7        ; 0x019
+    LD      R0        ; 0x01a
     WRM               ; 0x01b
-    LD      R1        ; 0x01c
-    FIM     P7      5 ; 0x01d
-    SRC     P7        ; 0x01f
+    FIM     P7      5 ; 0x01c
+    SRC     P7        ; 0x01e
+    LD      R1        ; 0x01f
     WRM               ; 0x020
     FIM     P0    0x1 ; 0x021
-    LD      R0        ; 0x023
-    FIM     P7      6 ; 0x024
-    SRC     P7        ; 0x026
+    FIM     P7      6 ; 0x023
+    SRC     P7        ; 0x025
+    LD      R0        ; 0x026
     WRM               ; 0x027
-    LD      R1        ; 0x028
-    FIM     P7      7 ; 0x029
-    SRC     P7        ; 0x02b
+    FIM     P7      7 ; 0x028
+    SRC     P7        ; 0x02a
+    LD      R1        ; 0x02b
     WRM               ; 0x02c
 
 L0,
@@ -44,7 +44,7 @@ L0,
     RDM               ; 0x037
     XCH     R1        ; 0x038
     FIM     P1      0 ; 0x039
-    FIM     P1   0x17 ; 0x03b
+    FIM     P1   0x2E ; 0x03b
     LD      R0        ; 0x03d
     SUB     R2        ; 0x03e
     JCN 0b1110     L1 ; 0x03f
@@ -82,13 +82,13 @@ L3,
     LD      R0        ; 0x063
     ADD     R2        ; 0x064
     XCH     R0        ; 0x065
-    LD      R0        ; 0x066
-    FIM     P7     10 ; 0x067
-    SRC     P7        ; 0x069
+    FIM     P7     10 ; 0x066
+    SRC     P7        ; 0x068
+    LD      R0        ; 0x069
     WRM               ; 0x06a
-    LD      R1        ; 0x06b
-    FIM     P7     11 ; 0x06c
-    SRC     P7        ; 0x06e
+    FIM     P7     11 ; 0x06b
+    SRC     P7        ; 0x06d
+    LD      R1        ; 0x06e
     WRM               ; 0x06f
     FIM     P7      0 ; 0x070
     SRC     P7        ; 0x072
@@ -118,13 +118,13 @@ L4,
     LD      R0        ; 0x08c
     ADD     R2        ; 0x08d
     XCH     R0        ; 0x08e
-    LD      R0        ; 0x08f
-    FIM     P7      8 ; 0x090
-    SRC     P7        ; 0x092
+    FIM     P7      8 ; 0x08f
+    SRC     P7        ; 0x091
+    LD      R0        ; 0x092
     WRM               ; 0x093
-    LD      R1        ; 0x094
-    FIM     P7      9 ; 0x095
-    SRC     P7        ; 0x097
+    FIM     P7      9 ; 0x094
+    SRC     P7        ; 0x096
+    LD      R1        ; 0x097
     WRM               ; 0x098
     FIM     P0      0 ; 0x099
     FIM     P7     10 ; 0x09b
@@ -174,13 +174,13 @@ L7,
     LD      R0        ; 0x0cf
     ADD     R2        ; 0x0d0
     XCH     R0        ; 0x0d1
-    LD      R0        ; 0x0d2
-    FIM     P7      8 ; 0x0d3
-    SRC     P7        ; 0x0d5
+    FIM     P7      8 ; 0x0d2
+    SRC     P7        ; 0x0d4
+    LD      R0        ; 0x0d5
     WRM               ; 0x0d6
-    LD      R1        ; 0x0d7
-    FIM     P7      9 ; 0x0d8
-    SRC     P7        ; 0x0da
+    FIM     P7      9 ; 0x0d7
+    SRC     P7        ; 0x0d9
+    LD      R1        ; 0x0da
     WRM               ; 0x0db
 
 L5,
@@ -192,13 +192,13 @@ L5,
     SRC     P7        ; 0x0e3
     RDM               ; 0x0e4
     XCH     R1        ; 0x0e5
-    LD      R0        ; 0x0e6
-    FIM     P7      2 ; 0x0e7
-    SRC     P7        ; 0x0e9
+    FIM     P7      2 ; 0x0e6
+    SRC     P7        ; 0x0e8
+    LD      R0        ; 0x0e9
     WRM               ; 0x0ea
-    LD      R1        ; 0x0eb
-    FIM     P7      3 ; 0x0ec
-    SRC     P7        ; 0x0ee
+    FIM     P7      3 ; 0x0eb
+    SRC     P7        ; 0x0ed
+    LD      R1        ; 0x0ee
     WRM               ; 0x0ef
     FIM     P7     10 ; 0x0f0
     SRC     P7        ; 0x0f2
@@ -208,19 +208,19 @@ L5,
     SRC     P7        ; 0x0f7
     RDM               ; 0x0f8
     XCH     R1        ; 0x0f9
-    LD      R0        ; 0x0fa
+    FIM     P7      6 ; 0x0fa
     JUN L8
 
 L1,
     JUN L9
 
 L8,
-    FIM     P7      6 ; 0x100
     SRC     P7        ; 0x100
+    LD      R0        ; 0x100
     WRM               ; 0x101
-    LD      R1        ; 0x102
-    FIM     P7      7 ; 0x103
-    SRC     P7        ; 0x105
+    FIM     P7      7 ; 0x102
+    SRC     P7        ; 0x104
+    LD      R1        ; 0x105
     WRM               ; 0x106
     FIM     P7      4 ; 0x107
     SRC     P7        ; 0x109
@@ -230,13 +230,13 @@ L8,
     SRC     P7        ; 0x10e
     RDM               ; 0x10f
     XCH     R1        ; 0x110
-    LD      R0        ; 0x111
-    FIM     P7      0 ; 0x112
-    SRC     P7        ; 0x114
+    FIM     P7      0 ; 0x111
+    SRC     P7        ; 0x113
+    LD      R0        ; 0x114
     WRM               ; 0x115
-    LD      R1        ; 0x116
-    FIM     P7      1 ; 0x117
-    SRC     P7        ; 0x119
+    FIM     P7      1 ; 0x116
+    SRC     P7        ; 0x118
+    LD      R1        ; 0x119
     WRM               ; 0x11a
     FIM     P7      8 ; 0x11b
     SRC     P7        ; 0x11d
@@ -246,46 +246,226 @@ L8,
     SRC     P7        ; 0x122
     RDM               ; 0x123
     XCH     R1        ; 0x124
-    LD      R0        ; 0x125
-    FIM     P7      4 ; 0x126
-    SRC     P7        ; 0x128
+    FIM     P7      4 ; 0x125
+    SRC     P7        ; 0x127
+    LD      R0        ; 0x128
     WRM               ; 0x129
-    LD      R1        ; 0x12a
-    FIM     P7      5 ; 0x12b
-    SRC     P7        ; 0x12d
+    FIM     P7      5 ; 0x12a
+    SRC     P7        ; 0x12c
+    LD      R1        ; 0x12d
     WRM               ; 0x12e
     FIM     P7     12 ; 0x12f
     SRC     P7        ; 0x131
     RDM               ; 0x132
-    XCH     R0        ; 0x133
+    XCH     R8        ; 0x133
     FIM     P7     13 ; 0x134
     SRC     P7        ; 0x136
     RDM               ; 0x137
-    XCH     R1        ; 0x138
-    FIM     P1    0x1 ; 0x139
-    LD      R1        ; 0x13b
-    ADD     R3        ; 0x13c
-    XCH     R1        ; 0x13d
-    JCN 0b1010    L10 ; 0x13e
-    LD      R0        ; 0x140
-    IAC               ; 0x141
-    XCH     R0        ; 0x142
+    XCH     R9        ; 0x138
+    FIM     P7     12 ; 0x139
+    SRC     P7        ; 0x13b
+    RDM               ; 0x13c
+    XCH    R10        ; 0x13d
+    FIM     P7     13 ; 0x13e
+    SRC     P7        ; 0x140
+    RDM               ; 0x141
+    XCH    R11        ; 0x142
+    LD      R9        ; 0x143
+    ADD    R11        ; 0x144
+    XCH     R9        ; 0x145
+    JCN 0b1010    L10 ; 0x146
+    LD      R8        ; 0x148
+    IAC               ; 0x149
+    XCH     R8        ; 0x14a
 
 L10,
-    LD      R0        ; 0x143
-    ADD     R2        ; 0x144
-    XCH     R0        ; 0x145
-    LD      R0        ; 0x146
-    FIM     P7     12 ; 0x147
-    SRC     P7        ; 0x149
-    WRM               ; 0x14a
-    LD      R1        ; 0x14b
-    FIM     P7     13 ; 0x14c
-    SRC     P7        ; 0x14e
-    WRM               ; 0x14f
-    JUN     L0        ; 0x150
+    LD      R8        ; 0x14b
+    ADD    R10        ; 0x14c
+    XCH     R8        ; 0x14d
+    FIM     P3     14 ; 0x14e
+    FIM     P5      0 ; 0x150
+    LD      R9        ; 0x152
+    ADD     R7        ; 0x153
+    XCH     R9        ; 0x154
+    JCN 0b1010    L11 ; 0x155
+    ISZ     R8    L11 ; 0x157
+    INC    R11        ; 0x159
+
+L11,
+    LD      R8        ; 0x15a
+    ADD     R6        ; 0x15b
+    XCH     R8        ; 0x15c
+    JCN 0b1010    L12 ; 0x15d
+    INC     11        ; 0x15f
+
+L12,
+    FIM     P7      8 ; 0x160
+    SRC     P7        ; 0x162
+    RDM               ; 0x163
+    XCH     R0        ; 0x164
+    FIM     P7      9 ; 0x165
+    SRC     P7        ; 0x167
+    RDM               ; 0x168
+    XCH     R1        ; 0x169
+    LD      R8        ; 0x16a
+    XCH    R14        ; 0x16b
+    LD      R9        ; 0x16c
+    XCH    R15        ; 0x16d
+    LD     R11        ; 0x16e
+    XCH    R13        ; 0x16f
+    LD     R13        ; 0x170
+    DCL               ; 0x171
+    SRC     P7        ; 0x172
+    LD     R13        ; 0x173
+    DCL               ; 0x174
+    SRC     P7        ; 0x175
+    LD      R0        ; 0x176
+    WRM               ; 0x177
+    INC    R15        ; 0x178
+    LD     R13        ; 0x179
+    DCL               ; 0x17a
+    SRC     P7        ; 0x17b
+    LD     R13        ; 0x17c
+    DCL               ; 0x17d
+    SRC     P7        ; 0x17e
+    LD      R1        ; 0x17f
+    WRM               ; 0x180
+    FIM     P6      0 ; 0x181
+    LD     R13        ; 0x183
+    DCL               ; 0x184
+    FIM     P7     12 ; 0x185
+    SRC     P7        ; 0x187
+    RDM               ; 0x188
+    XCH     R8        ; 0x189
+    FIM     P7     13 ; 0x18a
+    SRC     P7        ; 0x18c
+    RDM               ; 0x18d
+    XCH     R9        ; 0x18e
+    FIM     P5    0x2 ; 0x18f
+    LD      R9        ; 0x191
+    ADD    R11        ; 0x192
+    XCH     R9        ; 0x193
+    JCN 0b1010    L13 ; 0x194
+    LD      R8        ; 0x196
+    IAC               ; 0x197
+    XCH     R8        ; 0x198
+
+L13,
+    LD      R8        ; 0x199
+    ADD    R10        ; 0x19a
+    XCH     R8        ; 0x19b
+    FIM     P7     12 ; 0x19c
+    SRC     P7        ; 0x19e
+    RDM               ; 0x19f
+    XCH    R10        ; 0x1a0
+    FIM     P7     13 ; 0x1a1
+    SRC     P7        ; 0x1a3
+    RDM               ; 0x1a4
+    XCH    R11        ; 0x1a5
+    LD      R9        ; 0x1a6
+    ADD    R11        ; 0x1a7
+    XCH     R9        ; 0x1a8
+    JCN 0b1010    L14 ; 0x1a9
+    LD      R8        ; 0x1ab
+    IAC               ; 0x1ac
+    XCH     R8        ; 0x1ad
+
+L14,
+    LD      R8        ; 0x1ae
+    ADD    R10        ; 0x1af
+    XCH     R8        ; 0x1b0
+    FIM     P3     14 ; 0x1b1
+    FIM     P5      0 ; 0x1b3
+    LD      R9        ; 0x1b5
+    ADD     R7        ; 0x1b6
+    XCH     R9        ; 0x1b7
+    JCN 0b1010    L15 ; 0x1b8
+    ISZ     R8    L15 ; 0x1ba
+    INC    R11        ; 0x1bc
+
+L15,
+    LD      R8        ; 0x1bd
+    ADD     R6        ; 0x1be
+    XCH     R8        ; 0x1bf
+    JCN 0b1010    L16 ; 0x1c0
+    INC     11        ; 0x1c2
+
+L16,
+    FIM     P7     10 ; 0x1c3
+    SRC     P7        ; 0x1c5
+    RDM               ; 0x1c6
+    XCH     R0        ; 0x1c7
+    FIM     P7     11 ; 0x1c8
+    SRC     P7        ; 0x1ca
+    RDM               ; 0x1cb
+    XCH     R1        ; 0x1cc
+    LD      R8        ; 0x1cd
+    XCH    R14        ; 0x1ce
+    LD      R9        ; 0x1cf
+    XCH    R15        ; 0x1d0
+    LD     R11        ; 0x1d1
+    XCH    R13        ; 0x1d2
+    LD     R13        ; 0x1d3
+    DCL               ; 0x1d4
+    SRC     P7        ; 0x1d5
+    LD     R13        ; 0x1d6
+    DCL               ; 0x1d7
+    SRC     P7        ; 0x1d8
+    LD      R0        ; 0x1d9
+    WRM               ; 0x1da
+    INC    R15        ; 0x1db
+    LD     R13        ; 0x1dc
+    DCL               ; 0x1dd
+    SRC     P7        ; 0x1de
+    LD     R13        ; 0x1df
+    DCL               ; 0x1e0
+    SRC     P7        ; 0x1e1
+    LD      R1        ; 0x1e2
+    WRM               ; 0x1e3
+    FIM     P6      0 ; 0x1e4
+    LD     R13        ; 0x1e6
+    DCL               ; 0x1e7
+    FIM     P7     12 ; 0x1e8
+    SRC     P7        ; 0x1ea
+    RDM               ; 0x1eb
+    XCH     R0        ; 0x1ec
+    FIM     P7     13 ; 0x1ed
+    SRC     P7        ; 0x1ef
+    RDM               ; 0x1f0
+    XCH     R1        ; 0x1f1
+    FIM     P1    0x2 ; 0x1f2
+    LD      R1        ; 0x1f4
+    ADD     R3        ; 0x1f5
+    XCH     R1        ; 0x1f6
+    JCN 0b1010    L17 ; 0x1f7
+    LD      R0        ; 0x1f9
+    IAC               ; 0x1fa
+    JUN L18
+
+L17,
+    JUN L19
 
 L9,
+    JUN L20
+
+L18,
+    XCH     R0        ; 0x200
+
+L19,
+    LD      R0        ; 0x200
+    ADD     R2        ; 0x201
+    XCH     R0        ; 0x202
+    FIM     P7     12 ; 0x203
+    SRC     P7        ; 0x205
+    LD      R0        ; 0x206
+    WRM               ; 0x207
+    FIM     P7     13 ; 0x208
+    SRC     P7        ; 0x20a
+    LD      R1        ; 0x20b
+    WRM               ; 0x20c
+    JUN     L0        ; 0x20d
+
+L20,
 
 EOP,
-    JUN    EOP        ; 0x152
+    JUN    EOP        ; 0x20f

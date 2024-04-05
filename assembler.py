@@ -1,14 +1,9 @@
-instructions = [
+one_word_instructions: set[str] = {
     "NOP",
-    "JCN",
-    "FIM",
     "SRC",
     "FIN",
     "JIN",
-    "JUN",
-    "JMS",
     "INC",
-    "ISZ",
     "ADD",
     "SUB",
     "LD",
@@ -44,15 +39,17 @@ instructions = [
     "DAA",
     "KBP",
     "DCL"
-]
+}
 
-two_word_instructions = [
+two_word_instructions: set[str] = {
     "JCN",
     "FIM",
     "JUN",
     "JMS",
     "ISZ",
-]
+}
+
+instructions = one_word_instructions.union(two_word_instructions)
 
 data: list[int] = []
 address_labels: dict[str, int] = {}
@@ -112,7 +109,7 @@ def handle_lines(line: str) -> bool:
         case "SUB":
             reg = conv_r(tokens[0])
             data.append(0x90 + conv_int(reg, 0xF))
-        case "LD":
+        case "LD" :
             reg = conv_r(tokens[0])
             data.append(0xA0 + conv_int(reg, 0xF))
         case "XCH":
@@ -201,9 +198,6 @@ def add_label(line: str) -> bool:
         elif sp[0] in two_word_instructions:
             label_address_counter += 1
         return True
-    # elif len(line) > 2:
-    #     print("Error: Invalid line")
-        # return False
     if (line[0] in instructions) or (line[0] in address_labels):
         return False
     if line[0].isnumeric():
@@ -287,11 +281,3 @@ def assemble(source_path: str, bin_path) -> list[int]:
     with open(bin_path, "wb") as f:
         f.write(bytearray(data))
     return data
-
-
-def main():
-    assemble("resources/comp_test.txt", "resources/comp_test.bin")
-
-
-if __name__ == "__main__":
-    main()

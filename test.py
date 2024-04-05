@@ -1,4 +1,2 @@
-def hej():
-    return 2
-
-print((a := hej()))
+a, b = -1
+print(a, b)

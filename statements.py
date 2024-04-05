@@ -1,6 +1,8 @@
+from math import e
 from emit import Opcode
 from lex import Token, TokenType
 from parse import Parser
+from emit import Emitter
 
 
 
@@ -8,6 +10,7 @@ class Statement:
     def __init__(self, tokens: list[Token], parser: Parser):
         self.tokens: list[Token] = tokens
         self.parser: Parser = parser
+        self.emitter: Emitter = parser.emitter
 
     def check_validity(self) -> bool:
         pass
@@ -33,7 +36,7 @@ class Expression(Statement):
                 return False
         return True
     
-    def emit(self, pair_offset: int = 0, skip_last: bool = False) -> bool:
+    def emit(self, pair_offset: int = 0) -> bool:
         if not self.simplify():
             return False
         next_opperation = None
@@ -45,9 +48,9 @@ class Expression(Statement):
             token = self.tokens[i]
             if token.type == TokenType.NUMBER:
                 num_text:str = f"0x{hex(int(token.text) % 256)[2:].upper()}"
-                self.parser.emitter.emit_instruction(Opcode.FIM, f"P{pair}", num_text)
+                self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", num_text)
             elif token.type == TokenType.CHARACTER:
-                self.parser.emitter.emit_instruction(Opcode.FIM, f"P{pair}", ord(token.text))
+                self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", ord(token.text))
             elif token.type == TokenType.IDENT:
                 variable = self.parser.symbols[token.text]
                 if variable[1] in [TokenType.INT8, TokenType.CHAR]:
@@ -88,6 +91,31 @@ class Expression(Statement):
             self.tokens.pop(b-1)
         return True
     
+    def twelve_bit_edge_case(self, opperation: TokenType, pair_offset: int) -> bool:
+        pair1 = 2*pair_offset, 2*pair_offset+1
+        pair2 = 2*(pair_offset+1), 2*(pair_offset+1)+1
+        extra_reg = 2*(pair_offset+2)+1
+        self.parser.opperation_reg_to_reg(pair1[1], pair2[1], opperation)
+        self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+        if opperation == TokenType.PLUS:
+            self.emitter.emit_instruction(Opcode.INC, f"R{pair1[0]}")
+        else:
+            self.emitter.emit_instruction(Opcode.LD, f"R{pair1[0]}")
+            self.emitter.emit_instruction(Opcode.DAC)
+            self.emitter.emit_instruction(Opcode.XCH, f"R{pair1[0]}")
+        self.emitter.emit_label(self.emitter.get_next_label())
+        self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+        if opperation == TokenType.PLUS:
+            self.emitter.emit_instruction(Opcode.INC, f"R{extra_reg}")
+        else:
+            self.emitter.emit_instruction(Opcode.LD, f"R{extra_reg}")
+            self.emitter.emit_instruction(Opcode.DAC)
+            self.emitter.emit_instruction(Opcode.XCH, f"R{extra_reg}")
+        self.emitter.emit_label(self.emitter.get_next_label())
+        
+
+
+    
 
 class Assignment(Statement):
 
@@ -122,7 +150,7 @@ class Assignment(Statement):
 class Declaretion(Statement):
     def __init__(self, tokens: list[Token], parser: Parser):
         super().__init__(tokens, parser)
-        if len(self.tokens) > 3:
+        if len(self.tokens) > 3 and self.tokens[0].type != TokenType.OPENBRACKET:
             self.assignment: Assignment = Assignment(self.tokens[1:], self.parser)
         else:
             self.assignment: Assignment = None
@@ -130,21 +158,50 @@ class Declaretion(Statement):
     def check_validity(self) -> bool:
         if len(self.tokens) < 2:
             return False                                # No tokens
-        if self.tokens[0].type not in [TokenType.INT8, TokenType.INT4, TokenType.CHAR]:
+        if self.tokens[0].type not in [TokenType.INT8, TokenType.INT4, TokenType.CHAR, TokenType.OPENBRACKET]:
             return False                                # No type
-        if self.tokens[1].type != TokenType.IDENT:
-            return False                                # No variable name
-        if self.tokens[1].text in self.parser.symbols:
-            return False                                # Variable already declared
-        if len(self.tokens) == 2:
-            return True                                 # No assignment, EX: int8 a;
-        if self.tokens[2] == TokenType.EQ:
-            return self.assignment.check_validity(Assignment.DECLARETION)     # Assignment, EX: int8 a = 5;
+        if self.tokens[0].type == TokenType.OPENBRACKET:    # Array variable
+            if len(self.tokens) != 6:
+                return False                            # Invalid number of tokens
+            if self.tokens[1].type not in [TokenType.INT8, TokenType.INT4, TokenType.CHAR]:
+                return False                            # No type
+            if self.tokens[2].type != TokenType.COMMA:
+                return False                            # No comma
+            if self.tokens[3].type != TokenType.NUMBER:
+                return False                        # No size
+            if int(self.tokens[3].text) > 256 and self.tokens[1].type == TokenType.INT4:
+                return False                            # Size too large
+            if int(self.tokens[3].text) > 128 and self.tokens[1].type in [TokenType.INT8, TokenType.CHAR]:
+                return False                            # Size too large
+            if self.tokens[4].type != TokenType.CLOSEBRACKET:
+                return False                            # No closing bracket
+            if self.tokens[5].type != TokenType.IDENT:
+                return False                            # No variable name
+            if self.tokens[5].text in self.parser.symbols:
+                return False                            # Variable already declared
+            return True
+        else:       # Normal variablem
+            if self.tokens[1].type != TokenType.IDENT:
+                return False                                # No variable name
+            if self.tokens[1].text in self.parser.symbols:
+                return False                                # Variable already declared
+            if len(self.tokens) == 2:
+                return True                                 # No assignment, EX: int8 a;
+            if self.tokens[2] == TokenType.EQ:
+                return self.assignment.check_validity(Assignment.DECLARETION)     # Assignment, EX: int8 a = 5;
     
     def emit(self) -> bool:
         self.check_validity()
-        address = self.parser.heap.add_variable(self.tokens[0].type)
-        self.parser.symbols[self.tokens[1].text] = (address, self.tokens[0].type)
+        if self.tokens[0].type == TokenType.OPENBRACKET:
+            datatype = self.tokens[1].type
+            size = int(self.tokens[3].text)     # TODO: Add support for compile time expressions
+            variable_name = self.tokens[5].text
+        else:
+            datatype = self.tokens[0].type
+            size = 1
+            variable_name = self.tokens[1].text
+        address = self.parser.heap.add_variable(datatype, size)
+        self.parser.symbols[variable_name] = (address, datatype)
         if self.assignment is not None:
             return self.assignment.emit()
         return True
@@ -173,49 +230,49 @@ class Comparision(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        self.parser.emitter.emit_instruction(Opcode.FIM, Opcode.P0, 0x0)
+        self.emitter.emit_instruction(Opcode.FIM, Opcode.P0, 0x0)
         self.expression1.emit(0)
-        self.parser.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
+        self.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
         self.expression2.emit(1)
-        body_end_label = self.parser.emitter.generate_next_label()
+        body_end_label = self.emitter.generate_next_label()
         self.parser.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
         match self.opperation:
             case TokenType.EQ:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
             case TokenType.NOTEQ:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0100", body_end_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b0100", body_end_label)
             case TokenType.LT:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
-                body_label = self.parser.emitter.generate_a_label()
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                body_label = self.emitter.generate_a_label()
+                self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1010", body_end_label)
-                self.parser.emitter.emit_label(body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1010", body_end_label)
+                self.emitter.emit_label(body_label)
             case TokenType.LTEQ:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
-                body_label = self.parser.emitter.generate_a_label()
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                body_label = self.emitter.generate_a_label()
+                self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
-                self.parser.emitter.emit_label(body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
+                self.emitter.emit_label(body_label)
             case TokenType.GT:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
-                body_label = self.parser.emitter.generate_a_label()
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                body_label = self.emitter.generate_a_label()
+                self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0110", body_end_label)
-                self.parser.emitter.emit_label(body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b0110", body_end_label)
+                self.emitter.emit_label(body_label)
             case TokenType.GTEQ:
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
-                body_label = self.parser.emitter.generate_a_label()
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                body_label = self.emitter.generate_a_label()
+                self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
                 self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
-                self.parser.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
-                self.parser.emitter.emit_label(body_label)
+                self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
+                self.emitter.emit_label(body_label)
             case _:
                 return False
         return True
@@ -248,6 +305,6 @@ class While(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        self.parser.emitter.emit_label(self.top_label)
+        self.emitter.emit_label(self.top_label)
         self.comparision.emit()
         return True

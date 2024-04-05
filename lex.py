@@ -1,5 +1,6 @@
 import sys
 from enum import Enum
+from token import COMMA
 
 class TokenType(Enum):
     EOF = -1
@@ -19,6 +20,9 @@ class TokenType(Enum):
     INT8 = 114
     INT4 = 115
     CHAR = 116
+    OPENBRACKET = 117
+    CLOSEBRACKET = 118
+    COMMA = 119
 
     # Operators.
     EQ = 201
@@ -97,9 +101,7 @@ class Lexer:
     
     # Return the next token.
     def get_token(self) -> Token:
-        skip = True
-        while skip:
-            skip = self.skip_special_characters() or self.skip_comment()
+        while self.skip_special_characters() or self.skip_comment(): continue
 
         # Check the first character of this token to see if we can decide what it is.
         # If it is a multiple character operator (e.g., !=), number, identifier, or keyword then we will process the rest.
@@ -181,6 +183,12 @@ class Lexer:
                 token = Token(self.cur_char, TokenType.OPENBODY)
             case '}':
                 token = Token(self.cur_char, TokenType.CLOSEBODY)
+            case '[':
+                token = Token(self.cur_char, TokenType.OPENBRACKET)
+            case ']':
+                token = Token(self.cur_char, TokenType.CLOSEBRACKET)
+            case ',':
+                token = Token(self.cur_char, TokenType.COMMA)
             case item if item.isdigit():
                 start_pos = self.cur_pos
                 while self.peek().isdigit():
@@ -189,7 +197,7 @@ class Lexer:
                 token = Token(token_text, TokenType.NUMBER)
             case item if item.isalpha():
                 start_pos = self.cur_pos
-                while self.peek().isalnum() or self.peek() in ['[', ']']:
+                while self.peek().isalnum():
                     self.next_char()
                 token_text = self.source[start_pos:self.cur_pos + 1]
                 token_type = Token.check_if_keyword(token_text)

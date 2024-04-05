@@ -18,11 +18,6 @@ class Parser:
         self.labels_declared: set = set()
         self.labels_gotoed: set = set()
 
-        self.label_stack: list[str] = []
-        self.label_counter: int = 0
-
-        self.bin_address_counter: int = 0
-
         self.scopes: list["Statement"] = []
 
         self.cur_token: Token = None
@@ -82,10 +77,14 @@ class Parser:
             self.abort("No scope to close.")
         return self.scopes.pop()
     
-    def load_to_reg(self, address: int, reg: int) -> None:
-        if reg < 0 or reg > 15:
-            self.abort(f"Invalid register number: {reg}")
-        if (address // 256 != self.memory_control):
+    def select_word_in_memory(self, address: int | None = None):
+        if address is None:
+            self.heap_pointer, self.memory_control = -1, -1
+            self.emitter.emit_instruction(Opcode.LD, Opcode.R13)
+            self.emitter.emit_instruction(Opcode.DCL)
+            self.emitter.emit_instruction(Opcode.SRC, Opcode.P7)
+            return
+        elif (address // 256 != self.memory_control):
             self.memory_control = address // 256
             self.emitter.emit_instruction(Opcode.FIM, Opcode.P6, self.memory_control)
             self.emitter.emit_instruction(Opcode.LD, Opcode.R13)
@@ -94,23 +93,19 @@ class Parser:
             self.emitter.emit_instruction(Opcode.FIM, Opcode.P7, address)
             self.emitter.emit_instruction(Opcode.SRC, Opcode.P7)
             self.heap_pointer = address
+    
+    def load_to_reg(self, address: int | None, reg: int) -> None:
+        if reg < 0 or reg > 15:
+            self.abort(f"Invalid register number: {reg}")
+        self.select_word_in_memory(address)
         self.emitter.emit_instruction(Opcode.RDM)
         self.emitter.emit_instruction(Opcode.XCH, f"R{reg}")
-        self.bin_address_counter += 1 + 1
 
-    def save_from_reg(self, address: int, reg: int) -> None:
+    def save_from_reg(self, address: int | None, reg: int) -> None:
         if reg < 0 or reg > 15:
             self.abort(f"Invalid register number: {reg}")
-        if (address // 256 != self.memory_control):
-            self.memory_control = address // 256
-            self.emitter.emit_instruction(Opcode.FIM, Opcode.P6, self.memory_control)
-            self.emitter.emit_instruction(Opcode.LD, Opcode.R13)
-            self.emitter.emit_instruction(Opcode.DCL)
+        self.select_word_in_memory(address)
         self.emitter.emit_instruction(Opcode.LD, f"R{reg}")
-        if address != self.heap_pointer:
-            self.emitter.emit_instruction(Opcode.FIM, Opcode.P7, address)
-            self.emitter.emit_instruction(Opcode.SRC, Opcode.P7)
-            self.heap_pointer = address
         self.emitter.emit_instruction(Opcode.WRM)
 
     def load_to_pair(self, address: int, pair: int) -> None:
@@ -118,14 +113,24 @@ class Parser:
             self.abort(f"Invalid pair number: {pair}")
         reg = pair * 2
         self.load_to_reg(address, reg)
-        self.load_to_reg(address + 1, reg + 1)
+        if address is None:
+            self.emitter.emit_instruction(Opcode.INC, Opcode.R15)
+            self.select_word_in_memory()
+            self.load_to_reg(None, reg + 1)
+        else:
+            self.load_to_reg(address + 1, reg + 1)
     
-    def save_from_pair(self, address: int, pair: int) -> None:
+    def save_from_pair(self, address: int | None, pair: int) -> None:
         if pair < 0 or pair > 7:
             self.abort(f"Invalid pair number: {pair}")
         reg = pair * 2
         self.save_from_reg(address, reg)
-        self.save_from_reg(address + 1, reg + 1)
+        if address is None:
+            self.emitter.emit_instruction(Opcode.INC, Opcode.R15)
+            self.select_word_in_memory()
+            self.save_from_reg(None, reg + 1)
+        else:
+            self.save_from_reg(address + 1, reg + 1)
 
     def opperation_reg_to_reg_in_acc(self, reg1: int, reg2: int, opperation: TokenType) -> None:
         if reg1 == reg2:
@@ -145,7 +150,6 @@ class Parser:
     def opperation_reg_to_reg(self, reg1: int, reg2: int, opperation: TokenType) -> None:
         self.opperation_reg_to_reg_in_acc(reg1, reg2, opperation)
         self.emitter.emit_instruction(Opcode.XCH, f"R{reg1}")
-        self.bin_address_counter += 1
     
     def opperation_reg_to_pair(self, pair: int, reg: int, opperation: TokenType) -> None:
         if pair < 0 or pair > 7 or reg < 0 or reg > 15:
@@ -153,7 +157,6 @@ class Parser:
         pair = pair*2, pair*2+1
         self.opperation_reg_to_reg(pair[1], reg, opperation)
         self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
-        self.bin_address_counter += 2
         if opperation == TokenType.PLUS:
             opcode = Opcode.IAC
         elif opperation == TokenType.MINUS:
@@ -174,6 +177,28 @@ class Parser:
         self.opperation_reg_to_pair(pair2, pair1[1], opperation)
         self.opperation_reg_to_reg(pair2*2, pair1[0], opperation)
 
+    def twelve_bit_add(self, pair1: int, pair2: int, carry_reg: int) -> None:
+        if pair1 == pair2:
+            self.abort(f"Cannot add a pair to itself.")
+        if pair1 < 0 or pair1 > 7 or pair2 < 0 or pair2 > 7:
+            self.abort(f"Invalid pair number: {pair1} or {pair2}")
+        if carry_reg in [pair1*2, pair1*2+1, pair2*2, pair2*2+1]:
+            self.abort(f"Carry register cannot be in the pair.")
+        pair1 = pair1*2, pair1*2+1
+        pair2 = pair2*2, pair2*2+1
+        self.add_reg_to_reg(pair1[1], pair2[1])
+        label = self.emitter.generate_next_label()
+        self.emitter.emit_instruction(Opcode.JCN, '0b1010', label)
+        self.emitter.emit_instruction(Opcode.ISZ, f"R{pair1[0]}", label)
+        self.emitter.emit_instruction(Opcode.INC, f"R{carry_reg}")
+        self.emitter.emit_label(self.emitter.get_next_label())
+        self.add_reg_to_reg(pair1[0], pair2[0])
+        self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+        self.emitter.emit_instruction(Opcode.INC, carry_reg)
+        self.emitter.emit_label(self.emitter.get_next_label())
+
+
+
     def add_reg_to_reg(self, reg1: int, reg2: int) -> None:
         self.opperation_reg_to_reg(reg1, reg2, TokenType.PLUS)
 
@@ -192,8 +217,22 @@ class Parser:
     def sub_pair_from_pair(self, pair1: int, pair2: int) -> None:
         self.opperation_pair_pair(pair1, pair2, TokenType.MINUS)
 
+    def load_reg_to_reg(self, reg1: int, reg2: int) -> None:
+        if reg1 < 0 or reg1 > 15 or reg2 < 0 or reg2 > 15:
+            self.abort(f"Invalid register number: {reg1} or {reg2}")
+        self.emitter.emit_instruction(Opcode.LD, f"R{reg1}")
+        self.emitter.emit_instruction(Opcode.XCH, f"R{reg2}")
+
+    def load_pair_to_pair(self, pair1: int, pair2: int) -> None:
+        if pair1 < 0 or pair1 > 7 or pair2 < 0 or pair2 > 7:
+            self.abort(f"Invalid pair number: {pair1} or {pair2}")
+        pair1 = pair1*2, pair1*2+1
+        pair2 = pair2*2, pair2*2+1
+        self.load_reg_to_reg(pair1[0], pair2[0])
+        self.load_reg_to_reg(pair1[1], pair2[1])
+
     def statement(self) -> None:
-        if self.cur_token.type in [TokenType.INT8, TokenType.INT4, TokenType.CHAR]:
+        if self.cur_token.type in [TokenType.INT8, TokenType.INT4, TokenType.CHAR, TokenType.OPENBRACKET]:
             declaretion_tokens: list[Token] = [self.cur_token]
             while True:
                 self.next_token()
@@ -207,7 +246,55 @@ class Parser:
             return
         
         elif self.check_token(TokenType.IDENT):
-            if self.check_peek(TokenType.EQ):
+            if self.check_peek(TokenType.OPENBRACKET):
+                address, datatype = self.symbols[self.cur_token.text]
+                if address is None:
+                    self.abort(f"Variable {self.cur_token} not declared.")
+                self.next_token()
+                self.next_token()
+                expression_tokens: list[Token] = [self.cur_token]
+                while True:
+                    self.next_token()
+                    if self.check_token(TokenType.CLOSEBRACKET):
+                        break
+                    if self.check_token(TokenType.EOF):
+                        self.abort("Unexpected EOF.")
+                    expression_tokens.append(self.cur_token)
+                if datatype in [TokenType.INT8, TokenType.CHAR]:
+                    expression_tokens.append(Token('+', TokenType.PLUS))
+                    for i in range(len(expression_tokens)-1):
+                        expression_tokens.append(expression_tokens[i])
+                expression = Expression(expression_tokens, self)
+                successfull_emit = expression.emit(4)
+                if not successfull_emit:
+                    self.abort("Invalid expression.")
+                self.emitter.emit_instruction(Opcode.FIM, Opcode.P3, address & 0xFF)
+                self.emitter.emit_instruction(Opcode.FIM, Opcode.P5, address >> 8)
+                self.twelve_bit_add(4, 3, 11)
+                self.next_token()
+                self.match(TokenType.EQ)
+                expression_tokens: list[Token] = [self.cur_token]
+                while True:
+                    self.next_token()
+                    if self.check_token(TokenType.END_STATEMENT):
+                        break
+                    if self.check_token(TokenType.EOF):
+                        self.abort("Unexpected EOF.")
+                    expression_tokens.append(self.cur_token)
+                expression = Expression(expression_tokens, self)
+                if not (successfull_emit := expression.emit()):
+                    self.abort("Invalid expression.")
+                self.load_pair_to_pair(4, 7)
+                self.load_reg_to_reg(11, 13)
+                self.select_word_in_memory()
+                if datatype in [TokenType.INT8, TokenType.CHAR]:
+                    self.save_from_pair(address=None, pair=0)
+                elif datatype == TokenType.INT4:
+                    self.save_from_reg(address=None, pair=1)
+                self.end_statement()
+                return
+
+            elif self.check_peek(TokenType.EQ):
                 assignment_tokens: list[Token] = [self.cur_token]
                 while True:
                     self.next_token()
@@ -271,7 +358,6 @@ class Parser:
                 self.abort("Invalid while statement.")
             self.open_scope(while_statement)
             self.next_token()
-                
         elif self.check_token(TokenType.CLOSEBODY):
             scope = self.close_scope()
             if isinstance(scope, If):
@@ -280,7 +366,6 @@ class Parser:
                 self.emitter.emit_instruction(Opcode.JUN, scope.top_label)
                 self.emitter.emit_label(self.emitter.get_next_label())
             self.next_token()
-
         else:
             self.abort("Invalid statement.")
             

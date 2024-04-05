@@ -2,7 +2,10 @@ int8 a1 = 0; int8 a2 = 0;
 int8 b1 = 0; int8 b2 = 1;
 int8 c1;     int8 c2;
 int8 i;
-while i < 23 {
+
+[int8, 46] arr;
+
+while i < 46 {
     c2 = a2 + b2;
     c1 = a1 + b1;
     if c2 < b2 {
@@ -12,5 +15,7 @@ while i < 23 {
     b2 = c2;
     a1 = b1;
     b1 = c1;
-    i = i + 1;
+    arr[i] = c1;
+    arr[i+1] = c2;
+    i = i + 2;
 }

@@ -107,10 +107,10 @@ class Emitter:
             self.emit_line("NOP")
         if page_handle != -1:
             prev_page_address = (self.page << 8) | self.page_address
-        line = opcode.name.ljust(3, " ")
+        opcode = opcode.name.ljust(3, ' ')
         if arg1 is None:
             arg1 = ""
-        elif isinstance(arg1, Opcode) and 200 <= arg1.value < 315 :
+        elif isinstance(arg1, Opcode) and 200 <= arg1.value <= 315 :
             arg1 = arg1.name
         elif  not (isinstance(arg1, int) or isinstance(arg1, str)):
             return False
@@ -118,7 +118,7 @@ class Emitter:
             arg2 = ""
         elif not (isinstance(arg2, int) or isinstance(arg1, str)):
             return False
-        line += f" {str(arg1).rjust(6, " ")} {str(arg2).rjust(6, " ")} ; 0x{hex(prev_page_address)[2:].rjust(3, '0')}"
+        line = f"{opcode} {str(arg1).rjust(6, ' ')} {str(arg2).rjust(6, ' ')} ; 0x{hex(prev_page_address)[2:].rjust(3, '0')}"
         self.emit_line(line)
         return True
     
@@ -133,6 +133,7 @@ class Emitter:
             label = temp_stack.pop()
             self.emit_label(label)
             self.emit_line(f"JUN {self.generate_next_label()}")
+        self.label_stack.reverse()
         self.emit_label(page_top_label)
         self.page_address = 0
         self.page += 1

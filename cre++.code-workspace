@@ -4,8 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "../Compiler Tutorial"
+			"path": "../Intel_4004_Emulator"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Intel_4004_Emulator"
+	}
 }
