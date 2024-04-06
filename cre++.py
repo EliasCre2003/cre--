@@ -2,6 +2,7 @@ from lex import *
 from emit import *
 from parse import *
 from heap import *
+from routine import *
 from assembler import assemble
 
 
@@ -18,7 +19,9 @@ def main():
     lexer = Lexer(source)
     emitter = Emitter("out.s")
     heap = Heap(4096)
-    parser = Parser(lexer, emitter, heap)
+    routine_handler = RoutineHandler(emitter)
+
+    parser = Parser(lexer, emitter, heap, routine_handler)
 
     parser.program()    # Start the parser.
     emitter.write_file()    # Write the output to file.

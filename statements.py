@@ -54,15 +54,15 @@ class Expression(Statement):
             elif token.type == TokenType.IDENT:
                 variable = self.parser.symbols[token.text]
                 if variable[1] in [TokenType.INT8, TokenType.CHAR]:
-                    self.parser.load_to_pair(variable[0], pair)
+                    self.parser.routine_handler.load_to_pair(variable[0], pair)
                 elif variable[1] == TokenType.INT4:
-                    self.parser.load_to_reg(variable[0], 2*pair+1)
+                    self.parser.routine_handler.load_to_reg(variable[0], 2*pair+1)
             if i == 0:
                 if len(self.tokens) == 1:
                     break
                 next_opperation = self.tokens[i+1].type
                 continue
-            self.parser.opperation_pair_pair(pair_offset+1, pair_offset, next_opperation)
+            self.parser.routine_handler.opperation_pair_pair(pair_offset+1, pair_offset, next_opperation)
             if i == len(self.tokens) - 1:
                 break
             next_opperation = self.tokens[i+1].type
@@ -95,7 +95,7 @@ class Expression(Statement):
         pair1 = 2*pair_offset, 2*pair_offset+1
         pair2 = 2*(pair_offset+1), 2*(pair_offset+1)+1
         extra_reg = 2*(pair_offset+2)+1
-        self.parser.opperation_reg_to_reg(pair1[1], pair2[1], opperation)
+        self.parser.routine_handler.opperation_reg_to_reg(pair1[1], pair2[1], opperation)
         self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
         if opperation == TokenType.PLUS:
             self.emitter.emit_instruction(Opcode.INC, f"R{pair1[0]}")
@@ -141,9 +141,9 @@ class Assignment(Statement):
         self.expression.emit()
         variable = self.parser.symbols[self.tokens[0].text]
         if variable[1] in [TokenType.INT8, TokenType.CHAR]:          
-            self.parser.save_from_pair(variable[0], 0)
+            self.parser.routine_handler.save_from_pair(variable[0], 0)
         elif variable[1] == TokenType.INT4:
-            self.parser.save_from_reg(variable[0], 1)
+            self.parser.routine_handler.save_from_reg(variable[0], 1)
         return True
         
 
@@ -235,42 +235,42 @@ class Comparision(Statement):
         self.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
         self.expression2.emit(1)
         body_end_label = self.emitter.generate_next_label()
-        self.parser.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
+        self.parser.routine_handler.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
         match self.opperation:
             case TokenType.EQ:
                 self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
             case TokenType.NOTEQ:
                 self.emitter.emit_instruction(Opcode.JCN, "0b1100", body_end_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b0100", body_end_label)
             case TokenType.LT:
                 self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
                 body_label = self.emitter.generate_a_label()
                 self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b1010", body_end_label)
                 self.emitter.emit_label(body_label)
             case TokenType.LTEQ:
                 self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
                 body_label = self.emitter.generate_a_label()
                 self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_end_label)
                 self.emitter.emit_label(body_label)
             case TokenType.GT:
                 self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
                 body_label = self.emitter.generate_a_label()
                 self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b0110", body_end_label)
                 self.emitter.emit_label(body_label)
             case TokenType.GTEQ:
                 self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
                 body_label = self.emitter.generate_a_label()
                 self.emitter.emit_instruction(Opcode.JCN, "0b1110", body_label)
-                self.parser.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
+                self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b0010", body_end_label)
                 self.emitter.emit_label(body_label)
             case _:

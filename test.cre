@@ -2,10 +2,14 @@ int8 a1 = 0; int8 a2 = 0;
 int8 b1 = 0; int8 b2 = 1;
 int8 c1;     int8 c2;
 int8 i;
+[int8, 50] arr;
+arr[0] = a1;
+arr[1] = a2;
+arr[2] = b1;
+arr[3] = b2;
+i = 4;
 
-[int8, 46] arr;
-
-while i < 46 {
+while i < 50 {
     c2 = a2 + b2;
     c1 = a1 + b1;
     if c2 < b2 {
