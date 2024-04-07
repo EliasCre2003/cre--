@@ -1,5 +1,4 @@
 import sys
-
 from lex import *
 from emit import *
 from heap import *
@@ -143,29 +142,54 @@ class Parser:
                     self.abort("Invalid assignment.")
                 self.end_statement()
                 return
-            elif self.check_peek(TokenType.PLUS_EQ):
-                ...
-            elif self.check_peek(TokenType.MINUS_EQ):
-                ...
-            elif self.check_peek(TokenType.INC):
-                if self.symbols[self.cur_token] is None:
-                    self.abort(f"Variable {self.cur_token} not declared.")
-                address, datatype = self.symbols[self.cur_token]
+            elif self.check_peek(TokenType.PLUS_EQ) or self.check_peek(TokenType.MINUS_EQ):
+                variable = self.cur_token
+                assignment_tokens: list[Token] = [variable, Token('=', TokenType.EQ)]
                 self.next_token()
-                if not self.check_peek(TokenType.END_STATEMENT):
-                    self.abort("Invalid statement.")
+                minus_eq = self.check_token(TokenType.MINUS_EQ)
+                while True:
+                    self.next_token()
+                    if self.check_token(TokenType.END_STATEMENT):
+                        break
+                    if self.check_token(TokenType.EOF):
+                        self.abort("Unexpected EOF.")
+                    assignment_tokens.append(self.cur_token)
+                if minus_eq:
+                    for i in range(len(assignment_tokens)):
+                        if assignment_tokens[i].type == TokenType.PLUS:
+                            assignment_tokens[i] = Token('-', TokenType.MINUS)
+                        elif assignment_tokens[i].type == TokenType.MINUS:
+                            assignment_tokens[i] = Token('+', TokenType.PLUS)
+                assignment_tokens.insert(2, variable)
+                assignment_tokens.insert(3, Token('-', TokenType.MINUS) if minus_eq else Token('+', TokenType.PLUS))
+                successfull_emit = Assignment(assignment_tokens, self).emit()
+                if not successfull_emit:
+                    self.abort("Invalid assignment.")
+                self.end_statement()
+                return
+
+            elif self.check_peek(TokenType.INC) or self.check_peek(TokenType.DEC):
+                if self.symbols[self.cur_token.text] is None:
+                    self.abort(f"Variable {self.cur_token} not declared.")
+                address, datatype = self.symbols[self.cur_token.text]
+                self.next_token()
                 if datatype in [TokenType.INT8, TokenType.CHAR]:
                     self.routine_handler.load_to_pair(address, 0)
-                    self.emitter.emit_instruction(Opcode.ISZ, Opcode.R1, self.emitter.generate_next_label())
-                    self.emitter.emit_instruction(Opcode.INC, Opcode.R0)
-                    self.emitter.emit_label(self.emitter.get_next_label())
+                    if self.check_token(TokenType.INC):
+                        self.routine_handler.increment_pair(0)
+                    elif self.check_token(TokenType.DEC):
+                        self.routine_handler.decrement_pair(0)
                     self.routine_handler.save_from_pair(address, 0)
                 elif datatype == TokenType.INT4:
                     self.routine_handler.load_to_reg(address, 0)
-                    self.emitter.emit_instruction(Opcode.INC, Opcode.R0)
+                    if self.check_token(TokenType.INC):
+                        self.routine_handler.increment_reg(0)
+                    elif self.check_token(TokenType.DEC):
+                        self.routine_handler.decrement_reg(0)
                     self.routine_handler.save_from_reg(address, 0)
-            elif self.check_peek(TokenType.DEC):
-                ...
+                self.next_token()
+                self.end_statement()
+                return
             else:
                 self.abort("Invalid statement.")
 

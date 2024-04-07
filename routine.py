@@ -24,11 +24,6 @@ class RoutineHandler:
         self.memory_control: int = 0
 
         self.routine_label_counter: int = 0
-
-    # def next_routine_label(self) -> str:
-    #     label = f"R{self.routine_label_counter}"
-    #     self.routine_label_counter += 1
-    #     return label
     
     def add_routine(self, routine: Routine) -> bool:
         label = f"SR{self.routine_label_counter}"
@@ -135,6 +130,8 @@ class RoutineHandler:
     
     def opperation_reg_to_pair(self, pair: int, reg: int, opperation: TokenType) -> None:
         if self.emit_state:
+            pair = pair*2, pair*2+1
+            self.opperation_reg_to_reg(pair[1], reg, opperation)
             self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
             if opperation == TokenType.PLUS:
                 opcode = Opcode.IAC
@@ -149,8 +146,6 @@ class RoutineHandler:
             return
         if pair < 0 or pair > 7 or reg < 0 or reg > 15:
             self.abort(f"Invalid pair number: {pair} or register number: {reg}")
-        pair = pair*2, pair*2+1
-        self.opperation_reg_to_reg(pair[1], reg, opperation)
         self.add_routine(Routine(self.opperation_reg_to_pair, pair, reg, opperation))
         
     
@@ -218,14 +213,44 @@ class RoutineHandler:
         pair2 = pair2*2, pair2*2+1
         self.load_reg_to_reg(pair1[0], pair2[0])
         self.load_reg_to_reg(pair1[1], pair2[1])
+    
+    def increment_reg(self, reg: int) -> None:
+        if reg < 0 or reg > 15:
+            self.abort(f"Invalid register number: {reg}")
+        self.emitter.emit_instruction(Opcode.INC, f"R{reg}")
+
+    def decrement_reg(self, reg: int) -> None:
+        if self.emit_state:
+            self.emitter.emit_instruction(Opcode.LD, f"R{reg}")
+            self.emitter.emit_instruction(Opcode.DAC)
+            self.emitter.emit_instruction(Opcode.XCH, f"R{reg}")
+        if reg < 0 or reg > 15:
+            self.abort(f"Invalid register number: {reg}")
+        self.add_routine(Routine(self.decrement_reg, reg))
+    
+    def increment_pair(self, pair: int) -> None:
+        if pair < 0 or pair > 7:
+            self.abort(f"Invalid pair number: {pair}")
+        pair = pair*2, pair*2+1
+        self.emitter.emit_instruction(Opcode.ISZ, f"R{pair[1]}", self.emitter.generate_next_label())
+        self.emitter.emit_instruction(Opcode.INC, f"R{pair[0]}")
+        self.emitter.emit_label(self.emitter.get_next_label())
+
+    def decrement_pair(self, pair: int) -> None:
+        if self.emit_state:
+            pair = pair*2, pair*2+1
+            self.decrement_reg(pair[1])
+            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+            self.decrement_reg(pair[0])
+            self.emitter.emit_label(self.emitter.get_next_label())
+        if pair < 0 or pair > 7:
+            self.abort(f"Invalid pair number: {pair}")
+        self.add_routine(Routine(self.decrement_pair, pair))
 
     def emit(self):
         self.emit_state = True
-        # for routine in self.routines:
-        #     self.emitter.emit_label(self.routines[routine])
-        #     routine.execute()
-        #     self.emitter.emit_instruction(Opcode.BBL, 0)
         for routine, label in zip(self.routines, self.routine_labels):
+            self.emitter.emit(f"\n; {routine.function.__name__}")
             self.emitter.emit_label(label)
             routine.execute()
             self.emitter.emit_instruction(Opcode.BBL, 0)
