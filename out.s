@@ -5,736 +5,705 @@
     JMS    SR2        ; 0x008
     FIM     P0    0x0 ; 0x00a
     FIM     P7      2 ; 0x00c
-    JMS    SR3        ; 0x00e
-    JMS    SR4        ; 0x010
+    JMS    SR1        ; 0x00e
+    JMS    SR0        ; 0x010
     FIM     P7      3 ; 0x012
-    JMS    SR5        ; 0x014
-    JMS    SR6        ; 0x016
+    JMS    SR1        ; 0x014
+    JMS    SR2        ; 0x016
     FIM     P0    0x0 ; 0x018
     FIM     P7      4 ; 0x01a
-    JMS    SR7        ; 0x01c
-    JMS    SR8        ; 0x01e
+    JMS    SR1        ; 0x01c
+    JMS    SR0        ; 0x01e
     FIM     P7      5 ; 0x020
-    JMS    SR9        ; 0x022
-    JMS   SR10        ; 0x024
-    FIM     P0    0x1 ; 0x026
+    JMS    SR1        ; 0x022
+    JMS    SR2        ; 0x024
+    FIM     P0    0x0 ; 0x026
     FIM     P7      6 ; 0x028
-    JMS   SR11        ; 0x02a
-    JMS   SR12        ; 0x02c
+    JMS    SR1        ; 0x02a
+    JMS    SR0        ; 0x02c
     FIM     P7      7 ; 0x02e
-    JMS   SR13        ; 0x030
-    JMS   SR14        ; 0x032
-    FIM     P4    0x0 ; 0x034
-    FIM     P3     14 ; 0x036
-    FIM     P5      0 ; 0x038
-    JMS   SR15        ; 0x03a
-    FIM     P7      0 ; 0x03c
-    JMS   SR16        ; 0x03e
-    JMS   SR17        ; 0x040
-    FIM     P7      1 ; 0x042
-    JMS    SR1        ; 0x044
-    JMS   SR18        ; 0x046
-    LD      R8        ; 0x048
-    XCH    R14        ; 0x049
-    LD      R9        ; 0x04a
-    XCH    R15        ; 0x04b
-    LD     R11        ; 0x04c
-    XCH    R13        ; 0x04d
-    JMS   SR19        ; 0x04e
-    JMS   SR19        ; 0x050
-    JMS   SR20        ; 0x052
-    INC    R15        ; 0x054
-    JMS   SR19        ; 0x055
-    JMS   SR19        ; 0x057
-    JMS   SR21        ; 0x059
-    FIM     P4    0x2 ; 0x05b
-    FIM     P3     14 ; 0x05d
-    FIM     P5      0 ; 0x05f
-    JMS   SR15        ; 0x061
-    FIM     P6      0 ; 0x063
-    FIM     P7      2 ; 0x065
-    JMS    SR3        ; 0x067
-    JMS   SR22        ; 0x069
-    FIM     P7      3 ; 0x06b
-    JMS    SR5        ; 0x06d
-    JMS   SR23        ; 0x06f
-    LD      R8        ; 0x071
-    XCH    R14        ; 0x072
-    LD      R9        ; 0x073
-    XCH    R15        ; 0x074
-    LD     R11        ; 0x075
-    XCH    R13        ; 0x076
-    JMS   SR19        ; 0x077
-    JMS   SR19        ; 0x079
-    JMS   SR20        ; 0x07b
-    INC    R15        ; 0x07d
-    JMS   SR19        ; 0x07e
-    JMS   SR19        ; 0x080
-    JMS   SR21        ; 0x082
-    FIM     P4    0x4 ; 0x084
-    FIM     P3     14 ; 0x086
-    FIM     P5      0 ; 0x088
-    JMS   SR15        ; 0x08a
-    FIM     P6      0 ; 0x08c
-    FIM     P7      4 ; 0x08e
-    JMS    SR7        ; 0x090
-    JMS   SR24        ; 0x092
-    FIM     P7      5 ; 0x094
-    JMS    SR9        ; 0x096
-    JMS   SR25        ; 0x098
-    LD      R8        ; 0x09a
-    XCH    R14        ; 0x09b
-    LD      R9        ; 0x09c
-    XCH    R15        ; 0x09d
-    LD     R11        ; 0x09e
-    XCH    R13        ; 0x09f
-    JMS   SR19        ; 0x0a0
-    JMS   SR19        ; 0x0a2
-    JMS   SR20        ; 0x0a4
-    INC    R15        ; 0x0a6
-    JMS   SR19        ; 0x0a7
-    JMS   SR19        ; 0x0a9
-    JMS   SR21        ; 0x0ab
-    FIM     P4    0x6 ; 0x0ad
-    FIM     P3     14 ; 0x0af
-    FIM     P5      0 ; 0x0b1
-    JMS   SR15        ; 0x0b3
-    FIM     P6      0 ; 0x0b5
-    FIM     P7      6 ; 0x0b7
-    JMS   SR11        ; 0x0b9
-    JMS   SR26        ; 0x0bb
-    FIM     P7      7 ; 0x0bd
-    JMS   SR13        ; 0x0bf
-    JMS   SR27        ; 0x0c1
-    LD      R8        ; 0x0c3
-    XCH    R14        ; 0x0c4
-    LD      R9        ; 0x0c5
-    XCH    R15        ; 0x0c6
-    LD     R11        ; 0x0c7
-    XCH    R13        ; 0x0c8
-    JMS   SR19        ; 0x0c9
-    JMS   SR19        ; 0x0cb
-    JMS   SR20        ; 0x0cd
-    INC    R15        ; 0x0cf
-    JMS   SR19        ; 0x0d0
-    JMS   SR19        ; 0x0d2
-    JMS   SR21        ; 0x0d4
-    FIM     P0    0x4 ; 0x0d6
-    FIM     P6      0 ; 0x0d8
-    FIM     P7     12 ; 0x0da
-    JMS   SR28        ; 0x0dc
-    JMS   SR29        ; 0x0de
-    FIM     P7     13 ; 0x0e0
-    JMS   SR30        ; 0x0e2
-    JMS   SR31        ; 0x0e4
+    JMS    SR1        ; 0x030
+    JMS    SR2        ; 0x032
+    FIM     P0    0x0 ; 0x034
+    FIM     P7      8 ; 0x036
+    JMS    SR1        ; 0x038
+    JMS    SR0        ; 0x03a
+    FIM     P7      9 ; 0x03c
+    JMS    SR1        ; 0x03e
+    JMS    SR2        ; 0x040
+    FIM     P0    0x1 ; 0x042
+    FIM     P7     10 ; 0x044
+    JMS    SR1        ; 0x046
+    JMS    SR0        ; 0x048
+    FIM     P7     11 ; 0x04a
+    JMS    SR1        ; 0x04c
+    JMS    SR2        ; 0x04e
+    FIM     P4    0x0 ; 0x050
+    FIM     P3     20 ; 0x052
+    FIM     P5      0 ; 0x054
+    JMS    SR3        ; 0x056
+    FIM     P7      0 ; 0x058
+    JMS    SR1        ; 0x05a
+    JMS    SR4        ; 0x05c
+    FIM     P7      1 ; 0x05e
+    JMS    SR1        ; 0x060
+    JMS    SR5        ; 0x062
+    LD      R8        ; 0x064
+    XCH    R14        ; 0x065
+    LD      R9        ; 0x066
+    XCH    R15        ; 0x067
+    LD     R11        ; 0x068
+    XCH    R13        ; 0x069
+    JMS    SR1        ; 0x06a
+    JMS    SR1        ; 0x06c
+    JMS    SR0        ; 0x06e
+    INC    R15        ; 0x070
+    JMS    SR1        ; 0x071
+    JMS    SR1        ; 0x073
+    JMS    SR2        ; 0x075
+    FIM     P4    0x2 ; 0x077
+    FIM     P3     20 ; 0x079
+    FIM     P5      0 ; 0x07b
+    JMS    SR3        ; 0x07d
+    FIM     P6      0 ; 0x07f
+    FIM     P7      2 ; 0x081
+    JMS    SR1        ; 0x083
+    JMS    SR4        ; 0x085
+    FIM     P7      3 ; 0x087
+    JMS    SR1        ; 0x089
+    JMS    SR5        ; 0x08b
+    LD      R8        ; 0x08d
+    XCH    R14        ; 0x08e
+    LD      R9        ; 0x08f
+    XCH    R15        ; 0x090
+    LD     R11        ; 0x091
+    XCH    R13        ; 0x092
+    JMS    SR1        ; 0x093
+    JMS    SR1        ; 0x095
+    JMS    SR0        ; 0x097
+    INC    R15        ; 0x099
+    JMS    SR1        ; 0x09a
+    JMS    SR1        ; 0x09c
+    JMS    SR2        ; 0x09e
+    FIM     P4    0x4 ; 0x0a0
+    FIM     P3     20 ; 0x0a2
+    FIM     P5      0 ; 0x0a4
+    JMS    SR3        ; 0x0a6
+    FIM     P6      0 ; 0x0a8
+    FIM     P7      4 ; 0x0aa
+    JMS    SR1        ; 0x0ac
+    JMS    SR4        ; 0x0ae
+    FIM     P7      5 ; 0x0b0
+    JMS    SR1        ; 0x0b2
+    JMS    SR5        ; 0x0b4
+    LD      R8        ; 0x0b6
+    XCH    R14        ; 0x0b7
+    LD      R9        ; 0x0b8
+    XCH    R15        ; 0x0b9
+    LD     R11        ; 0x0ba
+    XCH    R13        ; 0x0bb
+    JMS    SR1        ; 0x0bc
+    JMS    SR1        ; 0x0be
+    JMS    SR0        ; 0x0c0
+    INC    R15        ; 0x0c2
+    JMS    SR1        ; 0x0c3
+    JMS    SR1        ; 0x0c5
+    JMS    SR2        ; 0x0c7
+    FIM     P4    0x6 ; 0x0c9
+    FIM     P3     20 ; 0x0cb
+    FIM     P5      0 ; 0x0cd
+    JMS    SR3        ; 0x0cf
+    FIM     P6      0 ; 0x0d1
+    FIM     P7      6 ; 0x0d3
+    JMS    SR1        ; 0x0d5
+    JMS    SR4        ; 0x0d7
+    FIM     P7      7 ; 0x0d9
+    JMS    SR1        ; 0x0db
+    JMS    SR5        ; 0x0dd
+    LD      R8        ; 0x0df
+    XCH    R14        ; 0x0e0
+    LD      R9        ; 0x0e1
+    XCH    R15        ; 0x0e2
+    LD     R11        ; 0x0e3
+    XCH    R13        ; 0x0e4
+    JMS    SR1        ; 0x0e5
+    JMS    SR1        ; 0x0e7
+    JMS    SR0        ; 0x0e9
+    INC    R15        ; 0x0eb
+    JMS    SR1        ; 0x0ec
+    JMS    SR1        ; 0x0ee
+    JMS    SR2        ; 0x0f0
+    FIM     P4    0x8 ; 0x0f2
+    FIM     P3     20 ; 0x0f4
+    FIM     P5      0 ; 0x0f6
+    JMS    SR3        ; 0x0f8
+    FIM     P6      0 ; 0x0fa
+    FIM     P7      8 ; 0x0fc
+    JMS    SR1        ; 0x0fe
+    JMS    SR4        ; 0x100
+    FIM     P7      9 ; 0x102
+    JMS    SR1        ; 0x104
+    JMS    SR5        ; 0x106
+    LD      R8        ; 0x108
+    XCH    R14        ; 0x109
+    LD      R9        ; 0x10a
+    XCH    R15        ; 0x10b
+    LD     R11        ; 0x10c
+    XCH    R13        ; 0x10d
+    JMS    SR1        ; 0x10e
+    JMS    SR1        ; 0x110
+    JMS    SR0        ; 0x112
+    INC    R15        ; 0x114
+    JMS    SR1        ; 0x115
+    JMS    SR1        ; 0x117
+    JMS    SR2        ; 0x119
+    FIM     P4    0xA ; 0x11b
+    FIM     P3     20 ; 0x11d
+    FIM     P5      0 ; 0x11f
+    JMS    SR3        ; 0x121
+    FIM     P6      0 ; 0x123
+    FIM     P7     10 ; 0x125
+    JMS    SR1        ; 0x127
+    JMS    SR4        ; 0x129
+    FIM     P7     11 ; 0x12b
+    JMS    SR1        ; 0x12d
+    JMS    SR5        ; 0x12f
+    LD      R8        ; 0x131
+    XCH    R14        ; 0x132
+    LD      R9        ; 0x133
+    XCH    R15        ; 0x134
+    LD     R11        ; 0x135
+    XCH    R13        ; 0x136
+    JMS    SR1        ; 0x137
+    JMS    SR1        ; 0x139
+    JMS    SR0        ; 0x13b
+    INC    R15        ; 0x13d
+    JMS    SR1        ; 0x13e
+    JMS    SR1        ; 0x140
+    JMS    SR2        ; 0x142
+    FIM     P0    0x6 ; 0x144
+    FIM     P6      0 ; 0x146
+    FIM     P7     18 ; 0x148
+    JMS    SR1        ; 0x14a
+    JMS    SR0        ; 0x14c
+    FIM     P7     19 ; 0x14e
+    JMS    SR1        ; 0x150
+    JMS    SR2        ; 0x152
 
 L0,
-    FIM     P0      0 ; 0x0e6
-    FIM     P7     12 ; 0x0e8
-    JMS   SR28        ; 0x0ea
-    JMS   SR32        ; 0x0ec
-    FIM     P7     13 ; 0x0ee
-    JMS   SR30        ; 0x0f0
-    JMS   SR33        ; 0x0f2
-    FIM     P1      0 ; 0x0f4
-    FIM     P1   0x32 ; 0x0f6
-    LD      R0        ; 0x0f8
-    SUB     R2        ; 0x0f9
-    JCN 0b1110     L1 ; 0x0fa
-    JUN L3
+    FIM     P0      0 ; 0x154
+    FIM     P7     18 ; 0x156
+    JMS    SR1        ; 0x158
+    JMS    SR4        ; 0x15a
+    FIM     P7     19 ; 0x15c
+    JMS    SR1        ; 0x15e
+    JMS    SR5        ; 0x160
+    FIM     P1      0 ; 0x162
+    FIM     P1   0x6C ; 0x164
+    JUN L2
 
 L1,
-    JUN L4
-
-L3,
-    JCN 0b0010     L2 ; 0x100
-    LD      R1        ; 0x100
-    SUB     R3        ; 0x101
-    JCN 0b1010     L1 ; 0x102
+    JUN L3
 
 L2,
-    FIM     P7      2 ; 0x104
-    JMS    SR3        ; 0x106
-    JMS   SR22        ; 0x108
-    FIM     P7      3 ; 0x10a
-    JMS    SR5        ; 0x10c
-    JMS   SR23        ; 0x10e
-    FIM     P7      6 ; 0x110
-    JMS   SR11        ; 0x112
-    JMS   SR34        ; 0x114
-    FIM     P7      7 ; 0x116
-    JMS   SR13        ; 0x118
-    JMS   SR35        ; 0x11a
-    JMS   SR36        ; 0x11c
-    JMS   SR37        ; 0x11e
-    JMS   SR38        ; 0x120
-    FIM     P7     10 ; 0x122
-    JMS   SR39        ; 0x124
-    JMS   SR40        ; 0x126
-    FIM     P7     11 ; 0x128
-    JMS   SR41        ; 0x12a
-    JMS   SR42        ; 0x12c
-    FIM     P7      0 ; 0x12e
-    JMS   SR16        ; 0x130
-    JMS   SR17        ; 0x132
-    FIM     P7      1 ; 0x134
-    JMS    SR1        ; 0x136
-    JMS   SR18        ; 0x138
-    FIM     P7      4 ; 0x13a
-    JMS    SR7        ; 0x13c
-    JMS   SR43        ; 0x13e
-    FIM     P7      5 ; 0x140
-    JMS    SR9        ; 0x142
-    JMS   SR44        ; 0x144
-    JMS   SR36        ; 0x146
-    JMS   SR37        ; 0x148
-    JMS   SR38        ; 0x14a
-    FIM     P7      8 ; 0x14c
-    JMS   SR45        ; 0x14e
-    JMS   SR46        ; 0x150
-    FIM     P7      9 ; 0x152
-    JMS   SR47        ; 0x154
-    JMS   SR48        ; 0x156
-    FIM     P0      0 ; 0x158
-    FIM     P7     10 ; 0x15a
-    JMS   SR39        ; 0x15c
-    JMS   SR49        ; 0x15e
-    FIM     P7     11 ; 0x160
-    JMS   SR41        ; 0x162
-    JMS   SR50        ; 0x164
-    FIM     P1      0 ; 0x166
-    FIM     P7      6 ; 0x168
-    JMS   SR11        ; 0x16a
-    JMS   SR34        ; 0x16c
-    FIM     P7      7 ; 0x16e
-    JMS   SR13        ; 0x170
-    JMS   SR35        ; 0x172
-    LD      R0        ; 0x174
-    SUB     R2        ; 0x175
-    JCN 0b1110     L5 ; 0x176
-    JCN 0b0010     L6 ; 0x178
-    LD      R1        ; 0x17a
-    SUB     R3        ; 0x17b
-    JCN 0b1010     L5 ; 0x17c
-
-L6,
-    FIM     P7      8 ; 0x17e
-    JMS   SR45        ; 0x180
-    JMS   SR51        ; 0x182
-    FIM     P7      9 ; 0x184
-    JMS   SR47        ; 0x186
-    JMS   SR52        ; 0x188
-    FIM     P1    0x1 ; 0x18a
-    JMS   SR36        ; 0x18c
-    JMS   SR37        ; 0x18e
-    JMS   SR38        ; 0x190
-    FIM     P7      8 ; 0x192
-    JMS   SR45        ; 0x194
-    JMS   SR46        ; 0x196
-    FIM     P7      9 ; 0x198
-    JMS   SR47        ; 0x19a
-    JMS   SR48        ; 0x19c
-
-L5,
-    FIM     P7      6 ; 0x19e
-    JMS   SR11        ; 0x1a0
-    JMS   SR26        ; 0x1a2
-    FIM     P7      7 ; 0x1a4
-    JMS   SR13        ; 0x1a6
-    JMS   SR27        ; 0x1a8
-    FIM     P7      2 ; 0x1aa
-    JMS    SR3        ; 0x1ac
-    JMS    SR4        ; 0x1ae
-    FIM     P7      3 ; 0x1b0
-    JMS    SR5        ; 0x1b2
-    JMS    SR6        ; 0x1b4
-    FIM     P7     10 ; 0x1b6
-    JMS   SR39        ; 0x1b8
-    JMS   SR49        ; 0x1ba
-    FIM     P7     11 ; 0x1bc
-    JMS   SR41        ; 0x1be
-    JMS   SR50        ; 0x1c0
-    FIM     P7      6 ; 0x1c2
-    JMS   SR11        ; 0x1c4
-    JMS   SR12        ; 0x1c6
-    FIM     P7      7 ; 0x1c8
-    JMS   SR13        ; 0x1ca
-    JMS   SR14        ; 0x1cc
-    FIM     P7      4 ; 0x1ce
-    JMS    SR7        ; 0x1d0
-    JMS   SR24        ; 0x1d2
-    FIM     P7      5 ; 0x1d4
-    JMS    SR9        ; 0x1d6
-    JMS   SR25        ; 0x1d8
-    FIM     P7      0 ; 0x1da
-    JMS   SR16        ; 0x1dc
-    JMS    SR0        ; 0x1de
-    FIM     P7      1 ; 0x1e0
-    JMS    SR1        ; 0x1e2
-    JMS    SR2        ; 0x1e4
-    FIM     P7      8 ; 0x1e6
-    JMS   SR45        ; 0x1e8
-    JMS   SR51        ; 0x1ea
-    FIM     P7      9 ; 0x1ec
-    JMS   SR47        ; 0x1ee
-    JMS   SR52        ; 0x1f0
-    FIM     P7      4 ; 0x1f2
-    JMS    SR7        ; 0x1f4
-    JMS    SR8        ; 0x1f6
-    FIM     P7      5 ; 0x1f8
-    JMS    SR9        ; 0x1fa
-    JUN L7
+    LD      R0        ; 0x100
+    SUB     R2        ; 0x100
+    JCN 0b1110     L1 ; 0x101
+    JCN 0b0010     L4 ; 0x103
+    LD      R1        ; 0x105
+    SUB     R3        ; 0x106
+    JCN 0b1010     L1 ; 0x107
 
 L4,
-    JUN L8
+    FIM     P7      4 ; 0x109
+    JMS    SR1        ; 0x10b
+    JMS    SR4        ; 0x10d
+    FIM     P7      5 ; 0x10f
+    JMS    SR1        ; 0x111
+    JMS    SR5        ; 0x113
+    FIM     P7     10 ; 0x115
+    JMS    SR1        ; 0x117
+    JMS    SR6        ; 0x119
+    FIM     P7     11 ; 0x11b
+    JMS    SR1        ; 0x11d
+    JMS    SR7        ; 0x11f
+    JMS    SR8        ; 0x121
+    JMS    SR9        ; 0x123
+    JMS   SR10        ; 0x125
+    FIM     P7     16 ; 0x127
+    JMS    SR1        ; 0x129
+    JMS    SR0        ; 0x12b
+    FIM     P7     17 ; 0x12d
+    JMS    SR1        ; 0x12f
+    JMS    SR2        ; 0x131
+    FIM     P7      2 ; 0x133
+    JMS    SR1        ; 0x135
+    JMS    SR4        ; 0x137
+    FIM     P7      3 ; 0x139
+    JMS    SR1        ; 0x13b
+    JMS    SR5        ; 0x13d
+    FIM     P7      8 ; 0x13f
+    JMS    SR1        ; 0x141
+    JMS    SR6        ; 0x143
+    FIM     P7      9 ; 0x145
+    JMS    SR1        ; 0x147
+    JMS    SR7        ; 0x149
+    JMS    SR8        ; 0x14b
+    JMS    SR9        ; 0x14d
+    JMS   SR10        ; 0x14f
+    FIM     P7     14 ; 0x151
+    JMS    SR1        ; 0x153
+    JMS    SR0        ; 0x155
+    FIM     P7     15 ; 0x157
+    JMS    SR1        ; 0x159
+    JMS    SR2        ; 0x15b
+    FIM     P7      0 ; 0x15d
+    JMS    SR1        ; 0x15f
+    JMS    SR4        ; 0x161
+    FIM     P7      1 ; 0x163
+    JMS    SR1        ; 0x165
+    JMS    SR5        ; 0x167
+    FIM     P7      6 ; 0x169
+    JMS    SR1        ; 0x16b
+    JMS    SR6        ; 0x16d
+    FIM     P7      7 ; 0x16f
+    JMS    SR1        ; 0x171
+    JMS    SR7        ; 0x173
+    JMS    SR8        ; 0x175
+    JMS    SR9        ; 0x177
+    JMS   SR10        ; 0x179
+    FIM     P7     12 ; 0x17b
+    JMS    SR1        ; 0x17d
+    JMS    SR0        ; 0x17f
+    FIM     P7     13 ; 0x181
+    JMS    SR1        ; 0x183
+    JMS    SR2        ; 0x185
+    FIM     P0      0 ; 0x187
+    FIM     P7     16 ; 0x189
+    JMS    SR1        ; 0x18b
+    JMS    SR4        ; 0x18d
+    FIM     P7     17 ; 0x18f
+    JMS    SR1        ; 0x191
+    JMS    SR5        ; 0x193
+    FIM     P1      0 ; 0x195
+    FIM     P7     10 ; 0x197
+    JMS    SR1        ; 0x199
+    JMS    SR6        ; 0x19b
+    FIM     P7     11 ; 0x19d
+    JMS    SR1        ; 0x19f
+    JMS    SR7        ; 0x1a1
+    LD      R0        ; 0x1a3
+    SUB     R2        ; 0x1a4
+    JCN 0b1110     L5 ; 0x1a5
+    JCN 0b0010     L6 ; 0x1a7
+    LD      R1        ; 0x1a9
+    SUB     R3        ; 0x1aa
+    JCN 0b1010     L5 ; 0x1ab
 
-L7,
-    JMS   SR10        ; 0x200
-    FIM     P7     12 ; 0x200
-    JMS   SR28        ; 0x202
-    JMS   SR53        ; 0x204
-    FIM     P7     13 ; 0x206
-    JMS   SR30        ; 0x208
-    JMS   SR54        ; 0x20a
-    FIM     P7     12 ; 0x20c
-    JMS   SR28        ; 0x20e
-    JMS   SR55        ; 0x210
-    FIM     P7     13 ; 0x212
-    JMS   SR30        ; 0x214
-    JMS   SR56        ; 0x216
-    JMS   SR57        ; 0x218
-    JMS   SR58        ; 0x21a
-    JMS   SR59        ; 0x21c
-    FIM     P3     14 ; 0x21e
-    FIM     P5      0 ; 0x220
-    JMS   SR15        ; 0x222
-    FIM     P7      8 ; 0x224
-    JMS   SR45        ; 0x226
-    JMS   SR51        ; 0x228
-    FIM     P7      9 ; 0x22a
-    JMS   SR47        ; 0x22c
-    JMS   SR52        ; 0x22e
-    LD      R8        ; 0x230
-    XCH    R14        ; 0x231
-    LD      R9        ; 0x232
-    XCH    R15        ; 0x233
-    LD     R11        ; 0x234
-    XCH    R13        ; 0x235
-    JMS   SR19        ; 0x236
-    JMS   SR19        ; 0x238
-    JMS   SR20        ; 0x23a
-    INC    R15        ; 0x23c
-    JMS   SR19        ; 0x23d
-    JMS   SR19        ; 0x23f
-    JMS   SR21        ; 0x241
-    FIM     P6      0 ; 0x243
-    FIM     P7     12 ; 0x245
-    JMS   SR28        ; 0x247
-    JMS   SR53        ; 0x249
-    FIM     P7     13 ; 0x24b
-    JMS   SR30        ; 0x24d
-    JMS   SR54        ; 0x24f
-    FIM     P5    0x2 ; 0x251
-    JMS   SR57        ; 0x253
-    JMS   SR58        ; 0x255
-    JMS   SR59        ; 0x257
-    FIM     P7     12 ; 0x259
-    JMS   SR28        ; 0x25b
-    JMS   SR55        ; 0x25d
-    FIM     P7     13 ; 0x25f
-    JMS   SR30        ; 0x261
-    JMS   SR56        ; 0x263
-    JMS   SR57        ; 0x265
-    JMS   SR58        ; 0x267
-    JMS   SR59        ; 0x269
-    FIM     P3     14 ; 0x26b
-    FIM     P5      0 ; 0x26d
-    JMS   SR15        ; 0x26f
-    FIM     P7     10 ; 0x271
-    JMS   SR39        ; 0x273
-    JMS   SR49        ; 0x275
-    FIM     P7     11 ; 0x277
-    JMS   SR41        ; 0x279
-    JMS   SR50        ; 0x27b
-    LD      R8        ; 0x27d
-    XCH    R14        ; 0x27e
-    LD      R9        ; 0x27f
-    XCH    R15        ; 0x280
-    LD     R11        ; 0x281
-    XCH    R13        ; 0x282
-    JMS   SR19        ; 0x283
-    JMS   SR19        ; 0x285
-    JMS   SR20        ; 0x287
-    INC    R15        ; 0x289
-    JMS   SR19        ; 0x28a
-    JMS   SR19        ; 0x28c
-    JMS   SR21        ; 0x28e
-    FIM     P6      0 ; 0x290
-    FIM     P7     12 ; 0x292
-    JMS   SR28        ; 0x294
-    JMS   SR32        ; 0x296
-    FIM     P7     13 ; 0x298
-    JMS   SR30        ; 0x29a
-    JMS   SR33        ; 0x29c
-    FIM     P1    0x2 ; 0x29e
-    JMS   SR36        ; 0x2a0
-    JMS   SR37        ; 0x2a2
-    JMS   SR38        ; 0x2a4
-    FIM     P7     12 ; 0x2a6
-    JMS   SR28        ; 0x2a8
-    JMS   SR29        ; 0x2aa
-    FIM     P7     13 ; 0x2ac
-    JMS   SR30        ; 0x2ae
-    JMS   SR31        ; 0x2b0
-    JUN     L0        ; 0x2b2
+L6,
+    FIM     P7     14 ; 0x1ad
+    JMS    SR1        ; 0x1af
+    JMS    SR4        ; 0x1b1
+    FIM     P7     15 ; 0x1b3
+    JMS    SR1        ; 0x1b5
+    JMS    SR5        ; 0x1b7
+    FIM     P1    0x1 ; 0x1b9
+    JMS    SR8        ; 0x1bb
+    JMS    SR9        ; 0x1bd
+    JMS   SR10        ; 0x1bf
+    FIM     P7     14 ; 0x1c1
+    JMS    SR1        ; 0x1c3
+    JMS    SR0        ; 0x1c5
+    FIM     P7     15 ; 0x1c7
+    JMS    SR1        ; 0x1c9
+    JMS    SR2        ; 0x1cb
+
+L5,
+    FIM     P0      0 ; 0x1cd
+    FIM     P7     14 ; 0x1cf
+    JMS    SR1        ; 0x1d1
+    JMS    SR4        ; 0x1d3
+    FIM     P7     15 ; 0x1d5
+    JMS    SR1        ; 0x1d7
+    JMS    SR5        ; 0x1d9
+    FIM     P1      0 ; 0x1db
+    FIM     P7      8 ; 0x1dd
+    JMS    SR1        ; 0x1df
+    JMS    SR6        ; 0x1e1
+    FIM     P7      9 ; 0x1e3
+    JMS    SR1        ; 0x1e5
+    JMS    SR7        ; 0x1e7
+    LD      R0        ; 0x1e9
+    SUB     R2        ; 0x1ea
+    JCN 0b1110     L7 ; 0x1eb
+    JCN 0b0010     L8 ; 0x1ed
+    LD      R1        ; 0x1ef
+    SUB     R3        ; 0x1f0
+    JCN 0b1010     L7 ; 0x1f1
 
 L8,
+    FIM     P7     12 ; 0x1f3
+    JMS    SR1        ; 0x1f5
+    JMS    SR4        ; 0x1f7
+    FIM     P7     13 ; 0x1f9
+    JUN L9
 
-EOP,
-    JUN    EOP        ; 0x2b4
+L7,
+    JUN L10
 
-SR0,
-    LD      R0        ; 0x2b6
-    WRM               ; 0x2b7
-    BBL      0        ; 0x2b8
-
-SR1,
-    LD     R13        ; 0x2b9
-    DCL               ; 0x2ba
-    SRC     P7        ; 0x2bb
-    BBL      0        ; 0x2bc
-
-SR2,
-    LD      R1        ; 0x2bd
-    WRM               ; 0x2be
-    BBL      0        ; 0x2bf
-
-SR3,
-    LD     R13        ; 0x2c0
-    DCL               ; 0x2c1
-    SRC     P7        ; 0x2c2
-    BBL      0        ; 0x2c3
-
-SR4,
-    LD      R0        ; 0x2c4
-    WRM               ; 0x2c5
-    BBL      0        ; 0x2c6
-
-SR5,
-    LD     R13        ; 0x2c7
-    DCL               ; 0x2c8
-    SRC     P7        ; 0x2c9
-    BBL      0        ; 0x2ca
-
-SR6,
-    LD      R1        ; 0x2cb
-    WRM               ; 0x2cc
-    BBL      0        ; 0x2cd
-
-SR7,
-    LD     R13        ; 0x2ce
-    DCL               ; 0x2cf
-    SRC     P7        ; 0x2d0
-    BBL      0        ; 0x2d1
-
-SR8,
-    LD      R0        ; 0x2d2
-    WRM               ; 0x2d3
-    BBL      0        ; 0x2d4
-
-SR9,
-    LD     R13        ; 0x2d5
-    DCL               ; 0x2d6
-    SRC     P7        ; 0x2d7
-    BBL      0        ; 0x2d8
-
-SR10,
-    LD      R1        ; 0x2d9
-    WRM               ; 0x2da
-    BBL      0        ; 0x2db
-
-SR11,
-    LD     R13        ; 0x2dc
-    DCL               ; 0x2dd
-    SRC     P7        ; 0x2de
-    BBL      0        ; 0x2df
-
-SR12,
-    LD      R0        ; 0x2e0
-    WRM               ; 0x2e1
-    BBL      0        ; 0x2e2
-
-SR13,
-    LD     R13        ; 0x2e3
-    DCL               ; 0x2e4
-    SRC     P7        ; 0x2e5
-    BBL      0        ; 0x2e6
-
-SR14,
-    LD      R1        ; 0x2e7
-    WRM               ; 0x2e8
-    BBL      0        ; 0x2e9
-
-SR15,
-    LD      R9        ; 0x2ea
-    ADD     R7        ; 0x2eb
-    XCH     R9        ; 0x2ec
-    JCN 0b1010     L9 ; 0x2ed
-    ISZ     R8     L9 ; 0x2ef
-    INC    R11        ; 0x2f1
+L3,
+    JUN L11
 
 L9,
-    LD      R8        ; 0x2f2
-    ADD     R6        ; 0x2f3
-    XCH     R8        ; 0x2f4
-    JCN 0b1010    L10 ; 0x2f5
-    INC     11        ; 0x2f7
+    JMS    SR1        ; 0x200
+    JMS    SR5        ; 0x200
+    FIM     P1    0x1 ; 0x202
+    JMS    SR8        ; 0x204
+    JMS    SR9        ; 0x206
+    JMS   SR10        ; 0x208
+    FIM     P7     12 ; 0x20a
+    JMS    SR1        ; 0x20c
+    JMS    SR0        ; 0x20e
+    FIM     P7     13 ; 0x210
+    JMS    SR1        ; 0x212
+    JMS    SR2        ; 0x214
 
 L10,
-    BBL      0        ; 0x2f8
-
-SR16,
-    LD     R13        ; 0x2f9
-    DCL               ; 0x2fa
-    SRC     P7        ; 0x2fb
-    BBL      0        ; 0x2fc
-
-SR17,
-    RDM               ; 0x2fd
-    XCH     R0        ; 0x2fe
-    BBL      0        ; 0x2ff
-
-SR18,
-    RDM               ; 0x300
-    XCH     R1        ; 0x301
-    BBL      0        ; 0x302
-
-SR19,
-    LD     R13        ; 0x303
-    DCL               ; 0x304
-    SRC     P7        ; 0x305
-    BBL      0        ; 0x306
-
-SR20,
-    LD      R0        ; 0x307
-    WRM               ; 0x308
-    BBL      0        ; 0x309
-
-SR21,
-    LD      R1        ; 0x30a
-    WRM               ; 0x30b
-    BBL      0        ; 0x30c
-
-SR22,
-    RDM               ; 0x30d
-    XCH     R0        ; 0x30e
-    BBL      0        ; 0x30f
-
-SR23,
-    RDM               ; 0x310
-    XCH     R1        ; 0x311
-    BBL      0        ; 0x312
-
-SR24,
-    RDM               ; 0x313
-    XCH     R0        ; 0x314
-    BBL      0        ; 0x315
-
-SR25,
-    RDM               ; 0x316
-    XCH     R1        ; 0x317
-    BBL      0        ; 0x318
-
-SR26,
-    RDM               ; 0x319
-    XCH     R0        ; 0x31a
-    BBL      0        ; 0x31b
-
-SR27,
-    RDM               ; 0x31c
-    XCH     R1        ; 0x31d
-    BBL      0        ; 0x31e
-
-SR28,
-    LD     R13        ; 0x31f
-    DCL               ; 0x320
-    SRC     P7        ; 0x321
-    BBL      0        ; 0x322
-
-SR29,
-    LD      R0        ; 0x323
-    WRM               ; 0x324
-    BBL      0        ; 0x325
-
-SR30,
-    LD     R13        ; 0x326
-    DCL               ; 0x327
-    SRC     P7        ; 0x328
-    BBL      0        ; 0x329
-
-SR31,
-    LD      R1        ; 0x32a
-    WRM               ; 0x32b
-    BBL      0        ; 0x32c
-
-SR32,
-    RDM               ; 0x32d
-    XCH     R0        ; 0x32e
-    BBL      0        ; 0x32f
-
-SR33,
-    RDM               ; 0x330
-    XCH     R1        ; 0x331
-    BBL      0        ; 0x332
-
-SR34,
-    RDM               ; 0x333
-    XCH     R2        ; 0x334
-    BBL      0        ; 0x335
-
-SR35,
-    RDM               ; 0x336
-    XCH     R3        ; 0x337
-    BBL      0        ; 0x338
-
-SR36,
-    LD      R1        ; 0x339
-    ADD     R3        ; 0x33a
-    XCH     R1        ; 0x33b
-    BBL      0        ; 0x33c
-
-SR37,
+    FIM     P7     10 ; 0x216
+    JMS    SR1        ; 0x218
+    JMS    SR4        ; 0x21a
+    FIM     P7     11 ; 0x21c
+    JMS    SR1        ; 0x21e
+    JMS    SR5        ; 0x220
+    FIM     P7      4 ; 0x222
+    JMS    SR1        ; 0x224
+    JMS    SR0        ; 0x226
+    FIM     P7      5 ; 0x228
+    JMS    SR1        ; 0x22a
+    JMS    SR2        ; 0x22c
+    FIM     P7     16 ; 0x22e
+    JMS    SR1        ; 0x230
+    JMS    SR4        ; 0x232
+    FIM     P7     17 ; 0x234
+    JMS    SR1        ; 0x236
+    JMS    SR5        ; 0x238
+    FIM     P7     10 ; 0x23a
+    JMS    SR1        ; 0x23c
+    JMS    SR0        ; 0x23e
+    FIM     P7     11 ; 0x240
+    JMS    SR1        ; 0x242
+    JMS    SR2        ; 0x244
+    FIM     P7      8 ; 0x246
+    JMS    SR1        ; 0x248
+    JMS    SR4        ; 0x24a
+    FIM     P7      9 ; 0x24c
+    JMS    SR1        ; 0x24e
+    JMS    SR5        ; 0x250
+    FIM     P7      2 ; 0x252
+    JMS    SR1        ; 0x254
+    JMS    SR0        ; 0x256
+    FIM     P7      3 ; 0x258
+    JMS    SR1        ; 0x25a
+    JMS    SR2        ; 0x25c
+    FIM     P7     14 ; 0x25e
+    JMS    SR1        ; 0x260
+    JMS    SR4        ; 0x262
+    FIM     P7     15 ; 0x264
+    JMS    SR1        ; 0x266
+    JMS    SR5        ; 0x268
+    FIM     P7      8 ; 0x26a
+    JMS    SR1        ; 0x26c
+    JMS    SR0        ; 0x26e
+    FIM     P7      9 ; 0x270
+    JMS    SR1        ; 0x272
+    JMS    SR2        ; 0x274
+    FIM     P7      6 ; 0x276
+    JMS    SR1        ; 0x278
+    JMS    SR4        ; 0x27a
+    FIM     P7      7 ; 0x27c
+    JMS    SR1        ; 0x27e
+    JMS    SR5        ; 0x280
+    FIM     P7      0 ; 0x282
+    JMS    SR1        ; 0x284
+    JMS    SR0        ; 0x286
+    FIM     P7      1 ; 0x288
+    JMS    SR1        ; 0x28a
+    JMS    SR2        ; 0x28c
+    FIM     P7     12 ; 0x28e
+    JMS    SR1        ; 0x290
+    JMS    SR4        ; 0x292
+    FIM     P7     13 ; 0x294
+    JMS    SR1        ; 0x296
+    JMS    SR5        ; 0x298
+    FIM     P7      6 ; 0x29a
+    JMS    SR1        ; 0x29c
+    JMS    SR0        ; 0x29e
+    FIM     P7      7 ; 0x2a0
+    JMS    SR1        ; 0x2a2
+    JMS    SR2        ; 0x2a4
+    FIM     P7     18 ; 0x2a6
+    JMS    SR1        ; 0x2a8
+    JMS   SR11        ; 0x2aa
+    FIM     P7     19 ; 0x2ac
+    JMS    SR1        ; 0x2ae
+    JMS   SR12        ; 0x2b0
+    FIM     P7     18 ; 0x2b2
+    JMS    SR1        ; 0x2b4
+    JMS   SR13        ; 0x2b6
+    FIM     P7     19 ; 0x2b8
+    JMS    SR1        ; 0x2ba
+    JMS   SR14        ; 0x2bc
+    JMS   SR15        ; 0x2be
+    JMS   SR16        ; 0x2c0
+    JMS   SR17        ; 0x2c2
+    FIM     P3     20 ; 0x2c4
+    FIM     P5      0 ; 0x2c6
+    JMS    SR3        ; 0x2c8
+    FIM     P7     12 ; 0x2ca
+    JMS    SR1        ; 0x2cc
+    JMS    SR4        ; 0x2ce
+    FIM     P7     13 ; 0x2d0
+    JMS    SR1        ; 0x2d2
+    JMS    SR5        ; 0x2d4
+    LD      R8        ; 0x2d6
+    XCH    R14        ; 0x2d7
+    LD      R9        ; 0x2d8
+    XCH    R15        ; 0x2d9
+    LD     R11        ; 0x2da
+    XCH    R13        ; 0x2db
+    JMS    SR1        ; 0x2dc
+    JMS    SR1        ; 0x2de
+    JMS    SR0        ; 0x2e0
+    INC    R15        ; 0x2e2
+    JMS    SR1        ; 0x2e3
+    JMS    SR1        ; 0x2e5
+    JMS    SR2        ; 0x2e7
+    FIM     P6      0 ; 0x2e9
+    FIM     P7     18 ; 0x2eb
+    JMS    SR1        ; 0x2ed
+    JMS   SR11        ; 0x2ef
+    FIM     P7     19 ; 0x2f1
+    JMS    SR1        ; 0x2f3
+    JMS   SR12        ; 0x2f5
+    FIM     P5    0x2 ; 0x2f7
+    JMS   SR15        ; 0x2f9
     JUN L12
 
 L11,
     JUN L13
 
 L12,
-    JCN 0b1010    L11 ; 0x300
-    LD      R0        ; 0x300
-    IAC               ; 0x301
-    XCH     R0        ; 0x302
+    JMS   SR16        ; 0x300
+    JMS   SR17        ; 0x300
+    FIM     P7     18 ; 0x302
+    JMS    SR1        ; 0x304
+    JMS   SR13        ; 0x306
+    FIM     P7     19 ; 0x308
+    JMS    SR1        ; 0x30a
+    JMS   SR14        ; 0x30c
+    JMS   SR15        ; 0x30e
+    JMS   SR16        ; 0x310
+    JMS   SR17        ; 0x312
+    FIM     P3     20 ; 0x314
+    FIM     P5      0 ; 0x316
+    JMS    SR3        ; 0x318
+    FIM     P7     14 ; 0x31a
+    JMS    SR1        ; 0x31c
+    JMS    SR4        ; 0x31e
+    FIM     P7     15 ; 0x320
+    JMS    SR1        ; 0x322
+    JMS    SR5        ; 0x324
+    LD      R8        ; 0x326
+    XCH    R14        ; 0x327
+    LD      R9        ; 0x328
+    XCH    R15        ; 0x329
+    LD     R11        ; 0x32a
+    XCH    R13        ; 0x32b
+    JMS    SR1        ; 0x32c
+    JMS    SR1        ; 0x32e
+    JMS    SR0        ; 0x330
+    INC    R15        ; 0x332
+    JMS    SR1        ; 0x333
+    JMS    SR1        ; 0x335
+    JMS    SR2        ; 0x337
+    FIM     P6      0 ; 0x339
+    FIM     P7     18 ; 0x33b
+    JMS    SR1        ; 0x33d
+    JMS   SR11        ; 0x33f
+    FIM     P7     19 ; 0x341
+    JMS    SR1        ; 0x343
+    JMS   SR12        ; 0x345
+    FIM     P5    0x4 ; 0x347
+    JMS   SR15        ; 0x349
+    JMS   SR16        ; 0x34b
+    JMS   SR17        ; 0x34d
+    FIM     P7     18 ; 0x34f
+    JMS    SR1        ; 0x351
+    JMS   SR13        ; 0x353
+    FIM     P7     19 ; 0x355
+    JMS    SR1        ; 0x357
+    JMS   SR14        ; 0x359
+    JMS   SR15        ; 0x35b
+    JMS   SR16        ; 0x35d
+    JMS   SR17        ; 0x35f
+    FIM     P3     20 ; 0x361
+    FIM     P5      0 ; 0x363
+    JMS    SR3        ; 0x365
+    FIM     P7     16 ; 0x367
+    JMS    SR1        ; 0x369
+    JMS    SR4        ; 0x36b
+    FIM     P7     17 ; 0x36d
+    JMS    SR1        ; 0x36f
+    JMS    SR5        ; 0x371
+    LD      R8        ; 0x373
+    XCH    R14        ; 0x374
+    LD      R9        ; 0x375
+    XCH    R15        ; 0x376
+    LD     R11        ; 0x377
+    XCH    R13        ; 0x378
+    JMS    SR1        ; 0x379
+    JMS    SR1        ; 0x37b
+    JMS    SR0        ; 0x37d
+    INC    R15        ; 0x37f
+    JMS    SR1        ; 0x380
+    JMS    SR1        ; 0x382
+    JMS    SR2        ; 0x384
+    FIM     P6      0 ; 0x386
+    FIM     P7     18 ; 0x388
+    JMS    SR1        ; 0x38a
+    JMS    SR4        ; 0x38c
+    FIM     P7     19 ; 0x38e
+    JMS    SR1        ; 0x390
+    JMS    SR5        ; 0x392
+    FIM     P1    0x3 ; 0x394
+    JMS    SR8        ; 0x396
+    JMS    SR9        ; 0x398
+    JMS   SR10        ; 0x39a
+    FIM     P7     18 ; 0x39c
+    JMS    SR1        ; 0x39e
+    JMS    SR0        ; 0x3a0
+    FIM     P7     19 ; 0x3a2
+    JMS    SR1        ; 0x3a4
+    JMS    SR2        ; 0x3a6
+    JUN     L0        ; 0x3a8
 
 L13,
-    BBL      0        ; 0x303
 
-SR38,
-    LD      R0        ; 0x304
-    ADD     R2        ; 0x305
-    XCH     R0        ; 0x306
-    BBL      0        ; 0x307
+EOP,
+    JUN    EOP        ; 0x3aa
 
-SR39,
-    LD     R13        ; 0x308
-    DCL               ; 0x309
-    SRC     P7        ; 0x30a
-    BBL      0        ; 0x30b
+SR0,
+    LD      R0        ; 0x3ac
+    WRM               ; 0x3ad
+    BBL      0        ; 0x3ae
 
-SR40,
-    LD      R0        ; 0x30c
-    WRM               ; 0x30d
-    BBL      0        ; 0x30e
+SR1,
+    LD     R13        ; 0x3af
+    DCL               ; 0x3b0
+    SRC     P7        ; 0x3b1
+    BBL      0        ; 0x3b2
 
-SR41,
-    LD     R13        ; 0x30f
-    DCL               ; 0x310
-    SRC     P7        ; 0x311
-    BBL      0        ; 0x312
+SR2,
+    LD      R1        ; 0x3b3
+    WRM               ; 0x3b4
+    BBL      0        ; 0x3b5
 
-SR42,
-    LD      R1        ; 0x313
-    WRM               ; 0x314
-    BBL      0        ; 0x315
-
-SR43,
-    RDM               ; 0x316
-    XCH     R2        ; 0x317
-    BBL      0        ; 0x318
-
-SR44,
-    RDM               ; 0x319
-    XCH     R3        ; 0x31a
-    BBL      0        ; 0x31b
-
-SR45,
-    LD     R13        ; 0x31c
-    DCL               ; 0x31d
-    SRC     P7        ; 0x31e
-    BBL      0        ; 0x31f
-
-SR46,
-    LD      R0        ; 0x320
-    WRM               ; 0x321
-    BBL      0        ; 0x322
-
-SR47,
-    LD     R13        ; 0x323
-    DCL               ; 0x324
-    SRC     P7        ; 0x325
-    BBL      0        ; 0x326
-
-SR48,
-    LD      R1        ; 0x327
-    WRM               ; 0x328
-    BBL      0        ; 0x329
-
-SR49,
-    RDM               ; 0x32a
-    XCH     R0        ; 0x32b
-    BBL      0        ; 0x32c
-
-SR50,
-    RDM               ; 0x32d
-    XCH     R1        ; 0x32e
-    BBL      0        ; 0x32f
-
-SR51,
-    RDM               ; 0x330
-    XCH     R0        ; 0x331
-    BBL      0        ; 0x332
-
-SR52,
-    RDM               ; 0x333
-    XCH     R1        ; 0x334
-    BBL      0        ; 0x335
-
-SR53,
-    RDM               ; 0x336
-    XCH     R8        ; 0x337
-    BBL      0        ; 0x338
-
-SR54,
-    RDM               ; 0x339
-    XCH     R9        ; 0x33a
-    BBL      0        ; 0x33b
-
-SR55,
-    RDM               ; 0x33c
-    XCH    R10        ; 0x33d
-    BBL      0        ; 0x33e
-
-SR56,
-    RDM               ; 0x33f
-    XCH    R11        ; 0x340
-    BBL      0        ; 0x341
-
-SR57,
-    LD      R9        ; 0x342
-    ADD    R11        ; 0x343
-    XCH     R9        ; 0x344
-    BBL      0        ; 0x345
-
-SR58,
-    JCN 0b1010    L14 ; 0x346
-    LD      R8        ; 0x348
-    IAC               ; 0x349
-    XCH     R8        ; 0x34a
+SR3,
+    LD      R9        ; 0x3b6
+    ADD     R7        ; 0x3b7
+    XCH     R9        ; 0x3b8
+    JCN 0b1010    L14 ; 0x3b9
+    ISZ     R8    L14 ; 0x3bb
+    INC    R11        ; 0x3bd
 
 L14,
-    BBL      0        ; 0x34b
+    LD      R8        ; 0x3be
+    ADD     R6        ; 0x3bf
+    XCH     R8        ; 0x3c0
+    JCN 0b1010    L15 ; 0x3c1
+    INC     11        ; 0x3c3
 
-SR59,
-    LD      R8        ; 0x34c
-    ADD    R10        ; 0x34d
-    XCH     R8        ; 0x34e
-    BBL      0        ; 0x34f
+L15,
+    BBL      0        ; 0x3c4
+
+SR4,
+    RDM               ; 0x3c5
+    XCH     R0        ; 0x3c6
+    BBL      0        ; 0x3c7
+
+SR5,
+    RDM               ; 0x3c8
+    XCH     R1        ; 0x3c9
+    BBL      0        ; 0x3ca
+
+SR6,
+    RDM               ; 0x3cb
+    XCH     R2        ; 0x3cc
+    BBL      0        ; 0x3cd
+
+SR7,
+    RDM               ; 0x3ce
+    XCH     R3        ; 0x3cf
+    BBL      0        ; 0x3d0
+
+SR8,
+    LD      R1        ; 0x3d1
+    ADD     R3        ; 0x3d2
+    XCH     R1        ; 0x3d3
+    BBL      0        ; 0x3d4
+
+SR9,
+    JCN 0b1010    L16 ; 0x3d5
+    LD      R0        ; 0x3d7
+    IAC               ; 0x3d8
+    XCH     R0        ; 0x3d9
+
+L16,
+    BBL      0        ; 0x3da
+
+SR10,
+    LD      R0        ; 0x3db
+    ADD     R2        ; 0x3dc
+    XCH     R0        ; 0x3dd
+    BBL      0        ; 0x3de
+
+SR11,
+    RDM               ; 0x3df
+    XCH     R8        ; 0x3e0
+    BBL      0        ; 0x3e1
+
+SR12,
+    RDM               ; 0x3e2
+    XCH     R9        ; 0x3e3
+    BBL      0        ; 0x3e4
+
+SR13,
+    RDM               ; 0x3e5
+    XCH    R10        ; 0x3e6
+    BBL      0        ; 0x3e7
+
+SR14,
+    RDM               ; 0x3e8
+    XCH    R11        ; 0x3e9
+    BBL      0        ; 0x3ea
+
+SR15,
+    LD      R9        ; 0x3eb
+    ADD    R11        ; 0x3ec
+    XCH     R9        ; 0x3ed
+    BBL      0        ; 0x3ee
+
+SR16,
+    JCN 0b1010    L17 ; 0x3ef
+    LD      R8        ; 0x3f1
+    IAC               ; 0x3f2
+    XCH     R8        ; 0x3f3
+
+L17,
+    BBL      0        ; 0x3f4
+
+SR17,
+    LD      R8        ; 0x3f5
+    ADD    R10        ; 0x3f6
+    XCH     R8        ; 0x3f7
+    BBL      0        ; 0x3f8
