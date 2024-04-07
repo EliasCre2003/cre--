@@ -62,7 +62,7 @@ class RoutineHandler:
             if address & 0xFF != self.heap_pointer:
                 self.heap_pointer = address & 0xFF
                 self.emitter.emit_instruction(Opcode.FIM, Opcode.P7, self.heap_pointer)
-        self.add_routine(Routine(self.select_word_in_memory, address))
+        self.add_routine(Routine(self.select_word_in_memory, None))
     
     def load_to_reg(self, address: int | None, reg: int) -> None:
         if self.emit_state:
@@ -72,7 +72,7 @@ class RoutineHandler:
         if reg < 0 or reg > 15:
             self.abort(f"Invalid register number: {reg}")
         self.select_word_in_memory(address)
-        self.add_routine(Routine(self.load_to_reg, address, reg))
+        self.add_routine(Routine(self.load_to_reg, None, reg))
         
 
     def save_from_reg(self, address: int | None, reg: int) -> None:
@@ -83,7 +83,7 @@ class RoutineHandler:
         if reg < 0 or reg > 15:
             self.abort(f"Invalid register number: {reg}")
         self.select_word_in_memory(address)
-        self.add_routine(Routine(self.save_from_reg, address, reg))
+        self.add_routine(Routine(self.save_from_reg, None, reg))
 
     def load_to_pair(self, address: int, pair: int) -> None:
         if pair < 0 or pair > 7:

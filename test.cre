@@ -1,25 +1,42 @@
-int8 a1 = 0; int8 a2 = 0;
-int8 b1 = 0; int8 b2 = 1;
-int8 c1;     int8 c2;
-int8 i;
-[int8, 50] arr;
+int8 a1 = 0; int8 a2 = 0; int8 a3 = 0; int8 a4 = 0;
+int8 b1 = 0; int8 b2 = 0; int8 b3 = 0; int8 b4 = 1;
+int8 c1 = 0; int8 c2 = 0; int8 c3 = 0; int8 c4 = 0;
+[int8, 128] arr;
 arr[0] = a1;
 arr[1] = a2;
-arr[2] = b1;
-arr[3] = b2;
-i = 4;
+arr[2] = a3;
+arr[3] = a4;
+arr[4] = b1;
+arr[5] = b2;
+arr[6] = b3;
+arr[7] = b4;
+int8 i = 8;
 
-while i < 50 {
+while i < 128 {
+    c4 = a4 + b4;
+    c3 = a3 + b3;
     c2 = a2 + b2;
     c1 = a1 + b1;
+    if c4 < b4 {
+        c3 = c3 + 1;
+    }
+    if c3 < b3 {
+        c2 = c2 + 1;
+    }
     if c2 < b2 {
         c1 = c1 + 1;
     }
+    a4 = b4;
+    b4 = c4;
+    a3 = b3;
+    b3 = c3;
     a2 = b2;
     b2 = c2;
     a1 = b1;
     b1 = c1;
     arr[i] = c1;
     arr[i+1] = c2;
-    i = i + 2;
+    arr[i+2] = c3;
+    arr[i+3] = c4;
+    i = i + 4;
 }

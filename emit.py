@@ -103,9 +103,7 @@ class Emitter:
         self.page_address += 1
         if 100 <= opcode.value <= 104:
             self.page_address += 1
-        if (page_handle := self.handle_page_support()) == 1:
-            self.emit_line("NOP")
-        if page_handle != -1:
+        if self.handle_page_support() != -1:
             prev_page_address = (self.page << 8) | self.page_address
         opcode = opcode.name.ljust(3, ' ')
         if arg1 is None:
@@ -123,7 +121,11 @@ class Emitter:
         return True
     
     def handle_page_support(self) -> int:
-        if overshoot := (254 - len(self.label_stack) - self.page_address) > 0 or len(self.label_stack) == 0:
+        if (overshoot := (254 - len(self.label_stack) - self.page_address)) > 0:
+            return -1
+        self.page_address = 0
+        self.page += 1
+        if len(self.label_stack) == 0:
             return -1
         page_top_label = self.generate_a_label()
         self.emit_line(f"JUN {page_top_label}")
@@ -134,9 +136,9 @@ class Emitter:
             self.emit_label(label)
             self.emit_line(f"JUN {self.generate_next_label()}")
         self.label_stack.reverse()
+        if overshoot == -1:
+            self.emit_line("NOP")
         self.emit_label(page_top_label)
-        self.page_address = 0
-        self.page += 1
         return -overshoot
     
     def emit_label(self, label: str) -> None:

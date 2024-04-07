@@ -28,7 +28,10 @@ def main():
     print("Compiling completed.")
     result = assemble("out.s", "out.bin")   # Assemble the output.
     print("Assembling completed.")
-    print(result)
+    for i in range(len(result)):
+        print(hex(result[i]), end=", ")
+        if i % 16 == 15:
+            print()
 
 
 if __name__ == "__main__":
