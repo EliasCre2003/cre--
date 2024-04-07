@@ -12,12 +12,14 @@ def main():
     # if len(sys.argv) != 2:
     #     sys.exit("Usage: cre++.py filename")
     # filepath = sys.argv[1]
-    filepath = "test.cre"
+    filepath = "src/test.cre"
+    name = filepath.split("/")[-1].split(".")[0]
     with open(filepath, 'r') as f:
         source = f.read()
 
+    destination = "out/"
     lexer = Lexer(source)
-    emitter = Emitter("out.s")
+    emitter = Emitter(f"{destination}{name}.s")
     heap = Heap(4096)
     routine_handler = RoutineHandler(emitter)
 
@@ -26,7 +28,7 @@ def main():
     parser.program()    # Start the parser.
     emitter.write_file()    # Write the output to file.
     print("Compiling completed.")
-    result = assemble("out.s", "out.bin")   # Assemble the output.
+    result = assemble(f"{destination}{name}.s", f"{destination}{name}.bin")   # Assemble the output.
     print("Assembling completed.")
     for i in range(len(result)):
         print(hex(result[i]), end=", ")

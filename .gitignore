@@ -1,4 +1,4 @@
 /__pycache__
-.code-workspace
-*.s
-test.py
+/.vscode
+*.code-workspace
+/out
