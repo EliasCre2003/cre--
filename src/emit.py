@@ -89,9 +89,10 @@ class Emitter:
         self.code: str = ""
         self.page_address: int = 0
         self.page: int = 0
-
         self.label_stack: list[str] = []
+        self.short_label_stack: list[str] = []
         self.label_counter: int = 0
+
     
     def emit(self, code: str) -> None:
         self.code += code
@@ -127,14 +128,14 @@ class Emitter:
         self.page += 1
         if len(self.label_stack) == 0:
             return -1
-        page_top_label = self.generate_a_label()
+        page_top_label = self.generate_long_label()
         self.emit_line(f"JUN {page_top_label}")
         temp_stack = self.label_stack.copy()
         self.label_stack.clear()
         while len(temp_stack) > 0:
             label = temp_stack.pop()
             self.emit_label(label)
-            self.emit_line(f"JUN {self.generate_next_label()}")
+            self.emit_line(f"JUN {self.generate_next_long_label()}")
         self.label_stack.reverse()
         if overshoot == -1:
             self.emit_line("NOP")
@@ -152,15 +153,28 @@ class Emitter:
         with open(self.full_path, 'w') as f:
             f.write(self.code)
 
-    def generate_a_label(self) -> str:
+    def generate_long_label(self) -> str:
         label = f"L{self.label_counter}"
         self.label_counter += 1
         return label
     
-    def generate_next_label(self) -> str:
-        label = self.generate_a_label()
+    def peek_next_label(self, depth: int = 1) -> str:
+        return self.label_stack[-depth]
+    
+    def generate_next_long_label(self) -> str:
+        label = self.generate_long_label()
         self.label_stack.append(label)
         return label
     
+    def generate_next_short_label(self) -> str:
+        label = f"S{self.label_counter}"
+        self.label_counter += 1
+        self.label_stack.append(label)
+        self.short_label_stack.append(label)
+        return label
+    
     def get_next_label(self) -> str:
-        return self.label_stack.pop()
+        label = self.label_stack.pop()
+        if label in self.short_label_stack:
+            self.short_label_stack.remove(label)
+        return label

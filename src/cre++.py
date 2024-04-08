@@ -20,10 +20,8 @@ def main():
     destination = "out/"
     lexer = Lexer(source)
     emitter = Emitter(f"{destination}{name}.s")
-    heap = Heap(4096)
-    routine_handler = RoutineHandler(emitter)
 
-    parser = Parser(lexer, emitter, heap, routine_handler)
+    parser = Parser(lexer, emitter)
 
     parser.program()    # Start the parser.
     emitter.write_file()    # Write the output to file.

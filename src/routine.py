@@ -132,7 +132,7 @@ class RoutineHandler:
         if self.emit_state:
             pair = pair*2, pair*2+1
             self.opperation_reg_to_reg(pair[1], reg, opperation)
-            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_long_label())
             if opperation == TokenType.PLUS:
                 opcode = Opcode.IAC
             elif opperation == TokenType.MINUS:
@@ -163,13 +163,13 @@ class RoutineHandler:
             pair1 = pair1*2, pair1*2+1
             pair2 = pair2*2, pair2*2+1
             self.add_reg_to_reg(pair1[1], pair2[1])
-            label = self.emitter.generate_next_label()
+            label = self.emitter.generate_next_long_label()
             self.emitter.emit_instruction(Opcode.JCN, '0b1010', label)
             self.emitter.emit_instruction(Opcode.ISZ, f"R{pair1[0]}", label)
             self.emitter.emit_instruction(Opcode.INC, f"R{carry_reg}")
             self.emitter.emit_label(self.emitter.get_next_label())
             self.add_reg_to_reg(pair1[0], pair2[0])
-            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_long_label())
             self.emitter.emit_instruction(Opcode.INC, carry_reg)
             self.emitter.emit_label(self.emitter.get_next_label())
             return
@@ -232,7 +232,7 @@ class RoutineHandler:
         if pair < 0 or pair > 7:
             self.abort(f"Invalid pair number: {pair}")
         pair = pair*2, pair*2+1
-        self.emitter.emit_instruction(Opcode.ISZ, f"R{pair[1]}", self.emitter.generate_next_label())
+        self.emitter.emit_instruction(Opcode.ISZ, f"R{pair[1]}", self.emitter.generate_next_long_label())
         self.emitter.emit_instruction(Opcode.INC, f"R{pair[0]}")
         self.emitter.emit_label(self.emitter.get_next_label())
 
@@ -240,7 +240,7 @@ class RoutineHandler:
         if self.emit_state:
             pair = pair*2, pair*2+1
             self.decrement_reg(pair[1])
-            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
+            self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_long_label())
             self.decrement_reg(pair[0])
             self.emitter.emit_label(self.emitter.get_next_label())
         if pair < 0 or pair > 7:

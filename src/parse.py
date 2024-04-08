@@ -6,11 +6,11 @@ from routine import *
 
 # Parser object keeps track of current token and checks if the code matches the grammar.
 class Parser:
-    def __init__(self, lexer: Lexer, emitter: Emitter, heap: Heap, routine_handler: RoutineHandler):
+    def __init__(self, lexer: Lexer, emitter: Emitter):
         self.lexer: Lexer = lexer
         self.emitter: Emitter = emitter
-        self.heap: Heap = heap
-        self.routine_handler: RoutineHandler = routine_handler
+        self.heap: Heap = Heap(4096)
+        self.routine_handler: RoutineHandler = RoutineHandler(emitter)
 
         # self.heap_pointer: int = 0
         # self.memory_control: int = 0
@@ -211,7 +211,7 @@ class Parser:
                 self.next_token()
                 while_tokens.append(self.cur_token)
             while_statement: While = While(while_tokens, self)
-            while_statement.top_label = self.emitter.generate_a_label()
+            while_statement.top_label = self.emitter.generate_long_label()
             successfull_emit = while_statement.emit()
             if not successfull_emit:
                 self.abort("Invalid while statement.")
