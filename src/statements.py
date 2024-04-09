@@ -47,8 +47,8 @@ class Expression(Statement):
                 pair = pair_offset + 1
             token = self.tokens[i]
             if token.type == TokenType.NUMBER:
-                num_text:str = f"0x{hex(int(token.text) % 256)[2:].upper()}"
-                self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", num_text)
+                # num_text:str = f"0x{hex(int(token.text) % 256)[2:].upper()}"
+                self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", int(token.text))
             elif token.type == TokenType.CHARACTER:
                 self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", ord(token.text))
             elif token.type == TokenType.IDENT:
@@ -90,28 +90,7 @@ class Expression(Statement):
             self.tokens.pop(b-1)
             self.tokens.pop(b-1)
         return True
-    
-    # def twelve_bit_edge_case(self, opperation: TokenType, pair_offset: int) -> bool:
-    #     pair1 = 2*pair_offset, 2*pair_offset+1
-    #     pair2 = 2*(pair_offset+1), 2*(pair_offset+1)+1
-    #     extra_reg = 2*(pair_offset+2)+1
-    #     self.parser.routine_handler.opperation_reg_to_reg(pair1[1], pair2[1], opperation)
-    #     self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
-    #     if opperation == TokenType.PLUS:
-    #         self.parser.routine_handler.increment_reg(pair1[0])
-    #     else:
-    #         self.parser.routine_handler.decrement_reg(pair1[0])
-    #     self.emitter.emit_label(self.emitter.get_next_label())
-    #     self.emitter.emit_instruction(Opcode.JCN, '0b1010', self.emitter.generate_next_label())
-    #     if opperation == TokenType.PLUS:
-    #         self.parser.routine_handler.increment_reg(extra_reg)
-    #     else:
-    #         self.parser.routine_handler.decrement_reg(extra_reg)
-    #     self.emitter.emit_label(self.emitter.get_next_label())
         
-
-
-    
 
 class Assignment(Statement):
 

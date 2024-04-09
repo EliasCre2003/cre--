@@ -111,13 +111,17 @@ class Emitter:
             arg1 = ""
         elif isinstance(arg1, Opcode) and 200 <= arg1.value <= 315 :
             arg1 = arg1.name
-        elif  not (isinstance(arg1, int) or isinstance(arg1, str)):
+        elif not (isinstance(arg1, int) or isinstance(arg1, str)):
             return False
         if arg2 is None:
             arg2 = ""
         elif not (isinstance(arg2, int) or isinstance(arg1, str)):
             return False
-        line = f"{opcode} {str(arg1).rjust(6, ' ')} {str(arg2).rjust(6, ' ')} ; 0x{hex(prev_page_address)[2:].rjust(3, '0')}"
+        if isinstance(arg1, int):
+            arg1 = Emitter.hexadecimal(arg1)
+        if isinstance(arg2, int):
+            arg2 = Emitter.hexadecimal(arg2)
+        line = f"{opcode} {arg1.rjust(6, ' ')} {arg2.rjust(6, ' ')} ; 0x{hex(prev_page_address)[2:].rjust(3, '0')}"
         self.emit_line(line)
         return True
     
@@ -181,3 +185,7 @@ class Emitter:
     
     def get_label(self, depth: int = 1) -> str:
         return self.label_stack.pop(-depth)
+    
+    @staticmethod
+    def hexadecimal(num: int, length: int = 2) -> str:
+        return f"0x{hex(num)[2:].rjust(length, '0')}"
