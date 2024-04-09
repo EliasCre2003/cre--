@@ -232,7 +232,7 @@ class Comparision(Statement):
         self.expression2.emit(1)
         self.parser.routine_handler.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
         match self.opperation:
-            case TokenType.EQ:
+            case TokenType.EQEQ:
                 self.emitter.emit_instruction(Opcode.JCN, "0b1100", self.emitter.generate_next_long_label())
                 self.parser.routine_handler.opperation_reg_to_reg_in_acc(1, 3, TokenType.MINUS)
                 self.emitter.emit_instruction(Opcode.JCN, "0b1100", self.emitter.peek_next_label())
@@ -273,6 +273,7 @@ class If(Statement):
     def __init__(self, tokens: list[Token], parser: Parser):
         super().__init__(tokens, parser)
         self.comparision = Comparision(self.tokens[1:-1], self.parser)
+        self.memory_pointer_vals = self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer
     
     def check_validity(self) -> bool:
         return self.tokens[0].type == TokenType.IF and self.tokens[-1].type == TokenType.OPENBODY and self.comparision.check_validity()
@@ -282,6 +283,10 @@ class If(Statement):
             return False
         self.comparision.emit()
         return True
+    
+    def match_memory_pointer_vals(self) -> None:
+        if not self.memory_pointer_vals == (self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer):
+            self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer = -1, -1
 
 
 class While(Statement):
@@ -289,6 +294,7 @@ class While(Statement):
         super().__init__(tokens, parser)
         self.comparision: Comparision = Comparision(self.tokens[1:-1], self.parser)
         self.top_label: str = None
+        self.memory_pointer_vals = self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer
 
     def check_validity(self) -> bool:
         return self.tokens[0].type == TokenType.WHILE and self.tokens[-1].type == TokenType.OPENBODY and self.comparision.check_validity()
@@ -299,3 +305,7 @@ class While(Statement):
         self.emitter.emit_label(self.top_label)
         self.comparision.emit()
         return True
+
+    def match_memory_pointer_vals(self) -> None:
+        if self.memory_pointer_vals != (self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer):
+            self.parser.routine_handler.memory_control, self.parser.routine_handler.heap_pointer = -1, -1

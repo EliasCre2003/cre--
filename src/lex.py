@@ -14,6 +14,7 @@ class TokenType(Enum):
     GOTO = 102
     PRINT = 103
     IF = 106
+    ELSE = 107
     WHILE = 109
     OPENBODY = 112
     CLOSEBODY = 113

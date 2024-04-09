@@ -57,13 +57,19 @@ class Parser:
         return False
     
     def open_scope(self, scope: "Statement") -> None:
-        if isinstance(scope, If) or isinstance(scope, While):
+        if isinstance(scope, If) or isinstance(scope, While) or scope is TokenType.ELSE:
             self.scopes.append(scope)
 
     def close_scope(self) -> "Statement":
         if len(self.scopes) == 0:
             self.abort("No scope to close.")
         return self.scopes.pop()
+
+    def end_if_else_chain(self) -> None:
+        while len(self.scopes) > 0 and self.scopes[-1] is TokenType.ELSE:
+            self.close_scope()
+            self.emitter.emit_label(self.emitter.get_label(2))
+        self.emitter.emit_label(self.emitter.get_next_label())
 
     def statement(self) -> None:
         if self.cur_token.type in [TokenType.INT8, TokenType.INT4, TokenType.CHAR, TokenType.OPENBRACKET]:
@@ -217,10 +223,23 @@ class Parser:
                 self.abort("Invalid while statement.")
             self.open_scope(while_statement)
             self.next_token()
+            
         elif self.check_token(TokenType.CLOSEBODY):
             scope = self.close_scope()
+            if scope is not TokenType.ELSE:
+                scope.match_memory_pointer_vals()
             if isinstance(scope, If):
-                self.emitter.emit_label(self.emitter.get_next_label())
+                if not self.check_peek(TokenType.ELSE):
+                    self.end_if_else_chain()
+                else:
+                    self.emitter.emit_instruction(Opcode.JUN, self.emitter.generate_next_long_label())
+                    self.emitter.emit_label(self.emitter.get_label(2))
+                    self.open_scope(TokenType.ELSE)
+                    self.next_token()
+                    if self.check_peek(TokenType.OPENBODY):
+                        self.next_token()
+            elif scope == TokenType.ELSE:
+                self.end_if_else_chain()
             elif isinstance(scope, While):
                 self.emitter.emit_instruction(Opcode.JUN, scope.top_label)
                 self.emitter.emit_label(self.emitter.get_next_label())

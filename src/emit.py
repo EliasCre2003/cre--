@@ -178,3 +178,6 @@ class Emitter:
         if label in self.short_label_stack:
             self.short_label_stack.remove(label)
         return label
+    
+    def get_label(self, depth: int = 1) -> str:
+        return self.label_stack.pop(-depth)
