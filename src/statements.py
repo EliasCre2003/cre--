@@ -47,7 +47,6 @@ class Expression(Statement):
                 pair = pair_offset + 1
             token = self.tokens[i]
             if token.type == TokenType.NUMBER:
-                # num_text:str = f"0x{hex(int(token.text) % 256)[2:].upper()}"
                 self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", int(token.text))
             elif token.type == TokenType.CHARACTER:
                 self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", ord(token.text))
