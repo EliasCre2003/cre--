@@ -1,12 +1,15 @@
 int4 a = 2;
 int4 b;
 
+c:
+
 if a == 2 {
     b = 3;
 }
 else {
     b = 6;
 }
+goto c;
 
 //if a == 2 {
 //    b = 3;

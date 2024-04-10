@@ -1,6 +1,5 @@
 import sys
 from enum import Enum
-from token import COMMA
 
 class TokenType(Enum):
     EOF = -1
@@ -10,20 +9,21 @@ class TokenType(Enum):
     CHARACTER = 3
 
     # Keywords.
-    LABEL = 101
     GOTO = 102
     PRINT = 103
     IF = 106
     ELSE = 107
     WHILE = 109
-    OPENBODY = 112
-    CLOSEBODY = 113
     INT8 = 114
     INT4 = 115
     CHAR = 116
-    OPENBRACKET = 117
-    CLOSEBRACKET = 118
-    COMMA = 119
+    
+    OPENBODY = 151
+    CLOSEBODY = 152
+    LABEL = 153
+    OPENBRACKET = 154
+    CLOSEBRACKET = 155
+    COMMA = 156
 
     # Operators.
     EQ = 201
@@ -50,7 +50,7 @@ class Token:
     def check_if_keyword(token_text: str) -> TokenType | None:
         # Check if the given token text is a keyword.
         for type in TokenType:
-            if type.name.lower() == token_text and type.value >= 100 and type.value <= 200:
+            if type.name.lower() == token_text and type.value >= 100 and type.value <= 150:
                 return type
         if token_text == "{":
             return TokenType.OPENBODY
@@ -190,6 +190,8 @@ class Lexer:
                 token = Token(self.cur_char, TokenType.CLOSEBRACKET)
             case ',':
                 token = Token(self.cur_char, TokenType.COMMA)
+            case ':':
+                token = Token(self.cur_char, TokenType.LABEL)
             case item if item.isdigit():
                 start_pos = self.cur_pos
                 while self.peek().isdigit():

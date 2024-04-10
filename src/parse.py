@@ -16,7 +16,7 @@ class Parser:
         # self.memory_control: int = 0
 
         self.symbols: dict[str, tuple[int, TokenType]] = {}   # Variables declared so far. {symbol: (address, type)}
-        self.labels_declared: set = set()
+        self.labels_declared: dict[str, str] = {}   # Labels declared so far. {label: assembly_label}
         self.labels_gotoed: set = set()
 
         self.scopes: list["Statement"] = []
@@ -196,6 +196,19 @@ class Parser:
                 self.next_token()
                 self.end_statement()
                 return
+            
+            elif self.check_peek(TokenType.LABEL):
+                if self.cur_token.text in self.symbols.keys():
+                    self.abort(f"Attempting to declare label with name of variable: {self.cur_token.text}")
+                if self.cur_token.text in self.labels_declared.keys():
+                    self.abort(f"Attempting to declare label with name of another label: {self.cur_token.text}")
+                label = self.emitter.generate_long_label()
+                self.labels_declared[self.cur_token.text] = label
+                self.emitter.emit_label(label)
+                self.next_token()
+                self.next_token()
+                return
+            
             else:
                 self.abort("Invalid statement.")
 
@@ -244,6 +257,21 @@ class Parser:
                 self.emitter.emit_instruction(Opcode.JUN, scope.top_label)
                 self.emitter.emit_label(self.emitter.get_next_label())
             self.next_token()
+        
+        elif self.check_token(TokenType.GOTO):
+            self.next_token()
+            if not self.check_token(TokenType.IDENT):
+                self.abort("Invalid GOTO statement.")
+            if self.cur_token.text in self.symbols.keys():
+                self.abort(f"Attempting to GOTO to variable: {self.cur_token.text}")
+            self.labels_gotoed.add(self.cur_token.text)
+            self.emitter.emit_instruction(Opcode.JUN, self.labels_declared[self.cur_token.text])
+            self.next_token()
+            self.end_statement()
+
+                
+            
+        
         else:
             self.abort("Invalid statement.")
             
