@@ -55,6 +55,7 @@ class Expression(Statement):
                 if variable[1] in [TokenType.INT8, TokenType.CHAR]:
                     self.parser.routine_handler.load_to_pair(variable[0], pair)
                 elif variable[1] == TokenType.INT4:
+                    self.emitter.emit_instruction(Opcode.FIM, f"P{pair}", 0)
                     self.parser.routine_handler.load_to_reg(variable[0], 2*pair+1)
             if i == 0:
                 if len(self.tokens) == 1:
@@ -204,9 +205,9 @@ class Comparision(Statement):
     def emit(self) -> bool:
         if not self.check_validity():
             return False
-        self.emitter.emit_instruction(Opcode.FIM, Opcode.P0, 0x0)
+        # self.emitter.emit_instruction(Opcode.FIM, Opcode.P0, 0x0)
         self.expression1.emit(0)
-        self.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
+        # self.emitter.emit_instruction(Opcode.FIM, Opcode.P1, 0x0)
         self.expression2.emit(1)
         self.parser.routine_handler.opperation_reg_to_reg_in_acc(0, 2, TokenType.MINUS)
         match self.opperation:

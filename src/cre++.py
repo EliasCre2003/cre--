@@ -1,3 +1,5 @@
+import os
+
 from lex import *
 from emit import *
 from parse import *
@@ -18,6 +20,10 @@ def main():
         source = f.read()
 
     destination = "out/"
+    
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
     lexer = Lexer(source)
     emitter = Emitter(f"{destination}{name}.s")
 
