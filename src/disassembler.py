@@ -148,19 +148,19 @@ def generate_labels(data: bytes) -> None:
         match opr:
             case 0x1:
                 address = data[data_pointer + 1]
-                labels[address] = f"LBL_{len(labels)}"
+                labels[address] = f"L{len(labels)}"
             # case 0x2:
             #     address = data[data_pointer + 1]
-            #     labels[address] = f"LBL_{len(labels)}"
+            #     labels[address] = f"L{len(labels)}"
             case 0x4:
                 address = (opa << 8) + data[data_pointer + 1]
-                labels[address] = f"LBL_{len(labels)}"
+                labels[address] = f"L{len(labels)}"
             case 0x5:
                 address = (opa << 8) + data[data_pointer + 1]
-                labels[address] = f"LBL_{len(labels)}"
+                labels[address] = f"L{len(labels)}"
             case 0x7:
                 address = data[data_pointer + 1]
-                labels[address] = f"LBL_{len(labels)}"
+                labels[address] = f"L{len(labels)}"
             case _:
                 data_pointer -= 1
         data_pointer += 2
