@@ -19,10 +19,8 @@ class RoutineHandler:
         self.routines: list[Routine] = []
         self.routine_labels: list[str] = []
         self.emit_state: bool = False
-
         self.heap_pointer: int = 0
         self.memory_control: int = 0
-
         self.routine_label_counter: int = 0
     
     def add_routine(self, routine: Routine) -> bool:
@@ -246,6 +244,25 @@ class RoutineHandler:
         if pair < 0 or pair > 7:
             self.abort(f"Invalid pair number: {pair}")
         self.add_routine(Routine(self.decrement_pair, pair))
+
+    def shift_reg(self, reg: int, left: bool) -> None:
+        if self.emit_state:
+            self.emitter.emit_instruction(Opcode.CLC)
+            self.emitter.emit_instruction(Opcode.LD, f"R{reg}")
+            if left:
+                self.emitter.emit_instruction(Opcode.RAL)
+            else:
+                self.emitter.emit_instruction(Opcode.RAR)
+            self.emitter.emit_instruction(Opcode.XCH, f"R{reg}")
+        if reg < 0 or reg > 15:
+            self.abort(f"Invalid register number: {reg}")
+        self.add_routine(Routine(self.rshift_reg, reg))
+
+    def rshift_reg(self, reg: int) -> None:
+        self.shift_reg(reg, left=False)
+
+    def lshift_reg(self, reg: int) -> None:
+        self.shift_reg(reg, right=True)
 
     def emit(self):
         self.emit_state = True

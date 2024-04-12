@@ -33,6 +33,8 @@ class TokenType(Enum):
     DEC = 213
     PLUS_EQ = 214
     MINUS_EQ = 215
+    RSHIFT_EQ = 216
+    LSHIFT_EQ = 217
     EQEQ = 250
     NOTEQ = 251
     LT = 252
@@ -110,56 +112,62 @@ class Lexer:
         match self.cur_char:
             case '+':
                 if self.peek() == '+':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.INC)
+                    token = Token('+', TokenType.INC)
                 elif self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.PLUS_EQ)
+                    token = Token("+=", TokenType.PLUS_EQ)
                 else:
                     token = Token(self.cur_char, TokenType.PLUS)
             case '-':
                 if self.peek() == '-':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.DEC)
+                    token = Token("-=", TokenType.DEC)
                 elif self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.MINUS_EQ)
+                    token = Token("+=", TokenType.MINUS_EQ)
                 else:
-                    token = Token(self.cur_char, TokenType.MINUS)
+                    token = Token('-', TokenType.MINUS)
             case '=':
                 # Check whether this token is = or ==
                 if self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.EQEQ)
+                    token = Token("==", TokenType.EQEQ)
                 else:
-                    token = Token(self.cur_char, TokenType.EQ)
+                    token = Token("=", TokenType.EQ)
             case '>':
                  # Check whether this is token is > or >=
                 if self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.GTEQ)
+                    token = Token(">=", TokenType.GTEQ)
+                elif self.peek() == '>':
+                    self.next_char()
+                    if self.peek() == '=':
+                        self.next_char()
+                        token = Token(">>=", TokenType.RSHIFT_EQ)
+                    else:
+                        self.abort(f"Expected >>=, got >>{self.peek()}")
                 else:
                     token = Token(self.cur_char, TokenType.GT)
             case '<':
                 # Check whether this is token is < or <=
                 if self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.LTEQ)
+                    token = Token("<=", TokenType.LTEQ)
+                elif self.peek() == '<':
+                    self.next_char()
+                    if self.peek() == '=':
+                        self.next_char()
+                        token = Token("<<=", TokenType.LSHIFT_EQ)
+                    else:
+                        self.abort(f"Expected <<=, got <<{self.peek()}")
                 else:
-                    token = Token(self.cur_char, TokenType.LT)
+                    token = Token('<', TokenType.LT)
             case '!':
                 # Check whether this is token is !=
                 if self.peek() == '=':
-                    last_char = self.cur_char
                     self.next_char()
-                    token = Token(last_char + self.cur_char, TokenType.NOTEQ)
+                    token = Token("!=", TokenType.NOTEQ)
                 else:
                     self.abort(f"Expected !=, got !{self.peek()}")
             case '\'':
@@ -205,7 +213,6 @@ class Lexer:
                 token_text = self.source[start_pos:self.cur_pos + 1]
                 token_type = Token.check_if_keyword(token_text)
                 token = Token(token_text, token_type)
-
             case _:
                 self.abort(f"Unrecognized character: {self.cur_char}")
         self.next_char()
