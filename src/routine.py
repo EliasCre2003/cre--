@@ -245,9 +245,10 @@ class RoutineHandler:
             self.abort(f"Invalid pair number: {pair}")
         self.add_routine(Routine(self.decrement_pair, pair))
 
-    def shift_reg(self, reg: int, left: bool) -> None:
+    def shift_reg(self, reg: int, left: bool, with_carry: bool = False) -> None:
         if self.emit_state:
-            self.emitter.emit_instruction(Opcode.CLC)
+            if not with_carry:
+                self.emitter.emit_instruction(Opcode.CLC)
             self.emitter.emit_instruction(Opcode.LD, f"R{reg}")
             if left:
                 self.emitter.emit_instruction(Opcode.RAL)
@@ -256,13 +257,27 @@ class RoutineHandler:
             self.emitter.emit_instruction(Opcode.XCH, f"R{reg}")
         if reg < 0 or reg > 15:
             self.abort(f"Invalid register number: {reg}")
-        self.add_routine(Routine(self.rshift_reg, reg))
+        self.add_routine(Routine(self.rshift_reg, reg, left, with_carry))
 
     def rshift_reg(self, reg: int) -> None:
         self.shift_reg(reg, left=False)
 
     def lshift_reg(self, reg: int) -> None:
         self.shift_reg(reg, right=True)
+
+    def rshift_pair(self, pair: int) -> None:
+        if pair < 0 or pair > 7:
+            self.abort(f"Invalid pair number: {pair}")
+        pair = pair*2, pair*2+1
+        self.shift_reg(pair[0], left=False)
+        self.shift_reg(pair[1], left=False, with_carry=True)
+    
+    def lshift_pair(self, pair: int) -> None:
+        if pair < 0 or pair > 7:
+            self.abort(f"Invalid pair number: {pair}")
+        pair = pair*2, pair*2+1
+        self.shift_reg(pair[1], left=True)
+        self.shift_reg(pair[0], left=True, with_carry=True)
 
     def emit(self):
         self.emit_state = True
